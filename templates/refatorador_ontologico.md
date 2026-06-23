@@ -13,5 +13,6 @@ RESUMO_BASE_EXISTENTE:
   2. Resolução de conflitos → substituir dado obsoleto + marcar [ATUALIZADO_{ANO}]
   3. Lacunas de inquérito → listar perguntas abertas geradas pelo novo nó
   4. Sugestão de próxima fonte → onde buscar para fechar a lacuna
+  5. Rastreabilidade estruturada: garanta que todos os novos axiomas criados no diff possuam o bloco YAML frontmatter completo com `confianca`, `evidencias_qtd`, `contradicoes_qtd` e `referencias`.
 
 [OUTPUT] Diff semântico da base · apenas o que muda · sem reescrever o que permanece
