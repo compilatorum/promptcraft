@@ -6,9 +6,10 @@ Este repositório implementa o **Motor Nexialista de Destilação de Conheciment
 
 ## 🔮 Planejamento de Escala e Integração Epistêmica
 
-O Promptcraft foi arquitetado para ir além da triagem e ingestão local. Para ver os planos detalhados de expansão e especificações de engenharia para cada tipo de dados heterogêneos (arXiv citation graphs, GitHub Starred readme parser, dados financeiros quantitativos, governance de DAOs, redes sociais e sincronização com o NotebookLM), consulte o documento mestre:
+O Promptcraft foi arquitetado para ir além da triagem e ingestão local. Para ver os planos detalhados de expansão, especificações de engenharia e modelagem de conectores para dados heterogêneos (YouTube, GitHub Starred, Reddit, NotebookLM, Google Drive via rclone, Bookmarks, Semantic Scholar, CDP/GPT chatlogs, Lightpanda e dados Web3/DAOs) em um grafo de conhecimento unificado (PKM), consulte as especificações:
 
 👉 **[Planejamento de Escala Epistêmica](file:///home/sukata/promptcraft/ontologia/planejamento_escala.md)**
+👉 **[Conectores de Ingestão e Estrutura de Grafo PKM](file:///home/sukata/promptcraft/ontologia/integracao_fontes_pkm.md)**
 
 ---
 

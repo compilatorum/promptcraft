@@ -11,7 +11,8 @@ from promptcraft import (
     parse_reddit_posts,
     get_volatility_score,
     calculate_semantic_overlap,
-    summarize_large_content
+    summarize_large_content,
+    fetch_url_text
 )
 
 def test_load_env():
@@ -158,6 +159,20 @@ CQEHU5ryPfQ,2026-04-05T20:57:38+00:00
         assert videos[1]["type"] == "video"
     finally:
         os.remove(temp_path)
+
+def test_fetch_url_text_youtube():
+    from unittest.mock import patch, MagicMock
+    with patch('youtube_transcript_api.YouTubeTranscriptApi.fetch') as mock_fetch:
+        mock_snippet_1 = MagicMock()
+        mock_snippet_1.text = "Hello"
+        mock_snippet_2 = MagicMock()
+        mock_snippet_2.text = "world"
+        mock_fetch.return_value = [mock_snippet_1, mock_snippet_2]
+        
+        res = fetch_url_text("https://www.youtube.com/watch?v=S6xzKM5UuOM")
+        assert "YouTube Video Transcript" in res
+        assert "Hello world" in res
+        mock_fetch.assert_called_once_with("S6xzKM5UuOM", languages=['pt', 'en', 'es'])
 
 def test_parse_reddit_posts():
     # Test JSON format

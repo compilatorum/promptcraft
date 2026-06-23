@@ -63,3 +63,13 @@ referencias:
   - doc:takeout-g34t34t4-home
 ---
 A ingestão de fontes exige um filtro prévio de proporção entre conteúdo útil e ruído estrutural/boilerplate. Se a densidade semântica (tokens informativos / total de bytes) for inferior a um limite crítico, a fonte deve ser pré-filtrada. [ATUALIZADO_2026]
+
+---
+axioma: Arquitetura Modular de Agentes (Skills e MCP)
+confianca: alto
+evidencias_qtd: 1
+contradicoes_qtd: 0
+referencias:
+  - video:S6xzKM5UuOM
+---
+A separação estrutural entre instruções comportamentais (Skills) e interfaces de comunicação externas (servidores MCP) determina a modularidade do agente de IA, sendo isomórfica à divisão entre a microarquitetura interna do processador e seus barramentos de I/O periféricos. [ATUALIZADO_2026]

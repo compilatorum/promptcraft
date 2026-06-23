@@ -103,6 +103,29 @@ class HTMLTextExtractor(HTMLParser):
 
 def fetch_url_text(url):
     log_info(f"Buscando conteúdo da URL: {url} ...")
+    
+    # Check if this is a YouTube video URL
+    video_id = None
+    if "youtube.com" in url.lower() or "youtu.be" in url.lower():
+        if "youtu.be" in url.lower():
+            video_id = url.split('/')[-1].split('?')[0]
+        else:
+            import urllib.parse
+            parsed = urllib.parse.urlparse(url)
+            queries = urllib.parse.parse_qs(parsed.query)
+            if "v" in queries:
+                video_id = queries["v"][0]
+                
+    if video_id:
+        log_info(f"Detectado vídeo do YouTube. Tentando extrair transcrição para o ID: {video_id} ...")
+        try:
+            from youtube_transcript_api import YouTubeTranscriptApi
+            transcript_list = YouTubeTranscriptApi().fetch(video_id, languages=['pt', 'en', 'es'])
+            transcript_text = " ".join([t.text for t in transcript_list])
+            return f"YouTube Video Transcript (ID: {video_id}):\n\n{transcript_text}"
+        except Exception as e:
+            log_warning(f"Não foi possível obter a transcrição do YouTube via API ({e}). Usando fallback estático...")
+
     try:
         req = urllib.request.Request(
             url, 

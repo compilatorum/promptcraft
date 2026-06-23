@@ -223,3 +223,29 @@ A ingestão de fontes exige um filtro prévio de proporção entre conteúdo út
 Estudar logs de tráfego de indexadores web open-source (como Apache Nutch) para avaliar limites práticos de filtros de redundância.
 
 ---
+
+## Processamento de Fonte (video) - 2026-06-23 15:52:08
+- **Referência**: manual-input
+- **Domínio**: domínio-próprio
+
+### Diff Semântico (Etapa 3)
+<<<<
+====
+---
+axioma: Arquitetura Modular de Agentes (Skills e MCP)
+confianca: alto
+evidencias_qtd: 1
+contradicoes_qtd: 0
+referencias:
+  - video:S6xzKM5UuOM
+---
+A separação estrutural entre instruções comportamentais (Skills) e interfaces de comunicação externas (servidores MCP) determina a modularidade do agente de IA, sendo isomórfica à divisão entre a microarquitetura interna do processador e seus barramentos de I/O periféricos. [ATUALIZADO_2026]
+>>>>
+
+=== Lacunas Abertas ===
+1. Como balancear o processamento de regras complexas entre Skills e MCP para evitar sobrecarga de contexto no LLM?
+
+=== Sugestão de Próxima Fonte ===
+Estudar a especificação do Model Context Protocol (MCP) da Anthropic e comparar com o modelo de sidecars e plug-ins da OpenAI.
+
+---
