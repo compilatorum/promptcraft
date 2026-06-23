@@ -1135,8 +1135,27 @@ def extract_classification(text):
         return f"[{match.group(1)}]"
     return None
 
-# Parsers for external sources (Section 2 of Manifesto)
-def fetch_github_starred(username):
+def fetch_github_starred(username=None):
+    if not username:
+        import subprocess
+        log_info("Usuário do GitHub não fornecido. Buscando estrelas da conta autenticada via 'gh api'...")
+        try:
+            res = subprocess.run(["gh", "api", "user/starred"], capture_output=True, text=True, timeout=10)
+            if res.returncode != 0:
+                raise Exception(res.stderr)
+            data = json.loads(res.stdout)
+            result = []
+            for repo in data:
+                result.append({
+                    "name": repo.get("full_name"),
+                    "description": repo.get("description") or "Sem descrição",
+                    "url": repo.get("html_url"),
+                    "language": repo.get("language") or "Desconhecida"
+                })
+            return result
+        except Exception as e:
+            raise Exception(f"Erro ao buscar estrelas do GitHub via gh CLI: {e}")
+
     url = f"https://api.github.com/users/{username}/starred"
     req = urllib.request.Request(
         url,
@@ -1156,6 +1175,28 @@ def fetch_github_starred(username):
         return result
     except Exception as e:
         raise Exception(f"Erro ao buscar estrelas do GitHub: {e}")
+
+def fetch_semantic_scholar_recommendations(arxiv_id):
+    url = f"https://api.semanticscholar.org/recommendations/v1/papers/forpaper/arXiv:{arxiv_id}?limit=3"
+    req = urllib.request.Request(
+        url,
+        headers={"User-Agent": "Mozilla/5.0 promptcraft-cli"}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode('utf-8'))
+        recommendations = data.get("recommendedPapers", [])
+        result = []
+        for paper in recommendations:
+            result.append({
+                "title": paper.get("title") or "Sem título",
+                "url": paper.get("url") or "",
+                "summary": paper.get("abstract") or "Sem abstract disponível"
+            })
+        return result
+    except Exception as e:
+        log_warning(f"Erro ao buscar adjacências no Semantic Scholar: {e}")
+        return []
 
 def fetch_arxiv_metadata(query_or_ids):
     if re.match(r'^\d{4}\.\d{4,5}', query_or_ids) or "," in query_or_ids:
@@ -1191,6 +1232,22 @@ def fetch_arxiv_metadata(query_or_ids):
         return result
     except Exception as e:
         raise Exception(f"Erro ao buscar arXiv: {e}")
+
+def parse_bookmarks_html(file_path):
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"Arquivo não encontrado: {file_path}")
+    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+        content = f.read()
+    # Extract <A HREF="...">text</A>
+    matches = re.findall(r'<A\s+[^>]*HREF=["\']([^"\']+)["\'][^>]*>(.*?)</A>', content, re.IGNORECASE | re.DOTALL)
+    result = []
+    for url, title in matches:
+        title_clean = re.sub(r'\s+', ' ', title).strip() or "Sem título"
+        result.append({
+            "url": url.strip(),
+            "title": title_clean
+        })
+    return result
 
 def parse_youtube_subscriptions(csv_path):
     if not os.path.exists(csv_path):
@@ -1305,7 +1362,7 @@ def parse_reddit_posts(file_path):
     return result
 
 def cmd_importar(args):
-    """Parses and ingests external sources like YouTube, GitHub, Reddit, and arXiv."""
+    """Parses and ingests external sources like YouTube, GitHub, Reddit, arXiv, bookmarks, gdrive, and snapshot."""
     import_type = args.type
     log_info(f"Iniciando importação de fontes do tipo '{import_type}'...")
     
@@ -1323,12 +1380,10 @@ def cmd_importar(args):
             sys.exit(1)
             
     elif import_type == "github":
-        if not args.user:
-            log_error("O parâmetro --user é obrigatório para importação do tipo github.")
-            sys.exit(1)
         try:
             entries = fetch_github_starred(args.user)
-            log_success(f"Carregados {len(entries)} repositórios favoritados do GitHub para o usuário {args.user}.")
+            user_label = args.user or "autenticada"
+            log_success(f"Carregados {len(entries)} repositórios favoritados do GitHub para a conta {user_label}.")
         except Exception as e:
             log_error(f"Falha ao buscar favoritos do GitHub: {e}")
             sys.exit(1)
@@ -1351,8 +1406,99 @@ def cmd_importar(args):
         try:
             entries = fetch_arxiv_metadata(args.query)
             log_success(f"Carregados {len(entries)} artigos do arXiv.")
+            
+            # For each entry, try to fetch Semantic Scholar recommendations (adjacent papers)
+            adjacent_entries = []
+            for entry in entries:
+                arxiv_match = re.search(r'arxiv.org/abs/(\d{4}\.\d{4,5})', entry['url'])
+                if arxiv_match:
+                    arxiv_id = arxiv_match.group(1)
+                    log_info(f"Buscando recomendações adjacentes para o paper {arxiv_id} no Semantic Scholar...")
+                    recs = fetch_semantic_scholar_recommendations(arxiv_id)
+                    adjacent_entries.extend(recs)
+            
+            if adjacent_entries:
+                log_success(f"Encontrados {len(adjacent_entries)} artigos adjacentes no Semantic Scholar.")
+                entries.extend(adjacent_entries)
         except Exception as e:
             log_error(f"Falha ao buscar artigos do arXiv: {e}")
+            sys.exit(1)
+
+    elif import_type == "bookmarks":
+        if not args.file:
+            log_error("O parâmetro --file é obrigatório para importação do tipo bookmarks (caminho para o html de favoritos).")
+            sys.exit(1)
+        try:
+            entries = parse_bookmarks_html(args.file)
+            log_success(f"Carregados {len(entries)} favoritos do arquivo {args.file}.")
+            if len(entries) > 1000:
+                log_warning(f"Alta quantidade de favoritos detectada ({len(entries)}). Limitando exibição para os primeiros 50 em fontes_importadas.md, mas salvando todos.")
+                entries = entries[:50]
+        except Exception as e:
+            log_error(f"Falha ao ler favoritos: {e}")
+            sys.exit(1)
+
+    elif import_type == "gdrive":
+        if not args.file:
+            log_error("O parâmetro --file (remoto:pasta) é obrigatório para importação do tipo gdrive (ex: xinaya:Claude).")
+            sys.exit(1)
+        try:
+            import subprocess
+            local_dest = os.path.join(BASE_DIR, "takeout")
+            os.makedirs(local_dest, exist_ok=True)
+            log_info(f"Executando rclone copy de {args.file} para {local_dest}...")
+            cmd = ["rclone", "copy", args.file, local_dest, "--max-depth", "2", "--include", "*.md", "--include", "*.txt", "--include", "*.pdf"]
+            res = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+            if res.returncode == 0:
+                log_success(f"Sincronização concluída com sucesso via rclone.")
+                imported_files = []
+                for root, _, files in os.walk(local_dest):
+                    for f in files:
+                        if f.endswith((".md", ".txt", ".pdf")):
+                            imported_files.append(f)
+                entries = [{"title": f, "url": f"file://{os.path.join(local_dest, f)}"} for f in imported_files[:50]]
+            else:
+                log_error(f"Erro no rclone: {res.stderr}")
+                sys.exit(1)
+        except Exception as e:
+            log_error(f"Falha ao executar rclone: {e}")
+            sys.exit(1)
+
+    elif import_type == "snapshot":
+        if not args.query:
+            log_error("O parâmetro --query (space name, ex: uniswap ou aave.eth) é obrigatório para importação do tipo snapshot.")
+            sys.exit(1)
+        try:
+            query = """
+            query Proposals($space: String!) {
+              proposals(
+                first: 10,
+                where: { space: $space, state: "closed" },
+                orderBy: "created",
+                orderDirection: desc
+              ) {
+                id
+                title
+                state
+                author
+              }
+            }
+            """
+            import urllib.request
+            payload = json.dumps({"query": query, "variables": {"space": args.query}})
+            req = urllib.request.Request(
+                "https://hub.snapshot.org/graphql",
+                data=payload.encode("utf-8"),
+                headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=10) as res:
+                data = json.loads(res.read().decode("utf-8"))
+                proposals = data.get("data", {}).get("proposals", [])
+                entries = [{"title": p["title"], "url": f"https://snapshot.org/#/{args.query}/proposal/{p['id']}"} for p in proposals]
+                log_success(f"Carregadas {len(entries)} propostas de governança da DAO {args.query}.")
+        except Exception as e:
+            log_error(f"Falha ao buscar propostas do Snapshot: {e}")
             sys.exit(1)
             
     # Write to fontes_importadas.md
@@ -1382,6 +1528,12 @@ def cmd_importar(args):
             lines.append(f"- **Reddit (r/{entry['subreddit']})**: [{entry['title']}]({entry['url']})\n  {entry['body'][:200]}...")
         elif import_type == "arxiv":
             lines.append(f"- **arXiv Paper**: [{entry['title']}]({entry['url']})\n  *Summary*: {entry['summary'][:300]}...")
+        elif import_type == "bookmarks":
+            lines.append(f"- **Bookmark**: [{entry['title']}]({entry['url']})")
+        elif import_type == "gdrive":
+            lines.append(f"- **GDrive File**: [{entry['title']}]({entry['url']})")
+        elif import_type == "snapshot":
+            lines.append(f"- **DAO Proposal**: [{entry['title']}]({entry['url']})")
             
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write("\n".join(lines) + "\n")
@@ -1654,7 +1806,7 @@ def main():
 
     # Command importar
     parser_imp = subparsers.add_parser("importar", help="Importa fontes externas (YouTube, GitHub, Reddit, arXiv) para o catálogo.")
-    parser_imp.add_argument("--type", choices=["youtube", "github", "reddit", "arxiv"], required=True, help="Tipo de fonte para importação.")
+    parser_imp.add_argument("--type", choices=["youtube", "github", "reddit", "arxiv", "bookmarks", "gdrive", "snapshot"], required=True, help="Tipo de fonte para importação.")
     parser_imp.add_argument("--file", help="Caminho do arquivo local (obrigatório para youtube/reddit).")
     parser_imp.add_argument("--user", help="Username do GitHub (obrigatório para github).")
     parser_imp.add_argument("--query", help="Termo de pesquisa ou lista de IDs (obrigatório para arxiv).")

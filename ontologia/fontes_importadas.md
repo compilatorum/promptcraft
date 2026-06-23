@@ -1301,3 +1301,138 @@ Registro consolidado de importações externas do ecossistema.
 - **Vídeo**: [Vídeo THeet9bbphw](https://www.youtube.com/watch?v=THeet9bbphw) (ID: `THeet9bbphw`)
 - **Vídeo**: [Vídeo tpCFfeUEGs8](https://www.youtube.com/watch?v=tpCFfeUEGs8) (ID: `tpCFfeUEGs8`)
 - **Vídeo**: [Vídeo 1lZOB2S17LU](https://www.youtube.com/watch?v=1lZOB2S17LU) (ID: `1lZOB2S17LU`)
+
+## Importação de BOOKMARKS em 2026-06-23 17:45:06
+
+- **Bookmark**: [Sem título](chrome-extension://hoimpamkkoehapgenciaoajfkfkpgfop/onetab.html)
+- **Bookmark**: [Sem título](https://github.com/copilot)
+- **Bookmark**: [bookmarklet](javascript:(function(){  // Remove painel antigo  document.getElementById()
+- **Bookmark**: [Sem título](https://claude.ai/new)
+- **Bookmark**: [Home | Oracle Cloud Infrastructure](https://cloud.oracle.com/?region=sa-saopaulo-1)
+- **Bookmark**: [Google Search](https://www.google.com/search?sca_esv=d0d85898a4f09928&sxsrf=ANbL-n7ys09pfTLgnRdxTZxMTvtdyCfJlw%3A1777300879773&source=hp&ei=j3Xvad2jLcqE5OUPxLzO2QQ&iflsig=AFdpzrgAAAAAae-DnxYkiY3q2PbfRxphGO5Njd-eR74K&ved=0ahUKEwidp-LcoY6UAxVKArkGHUSeM0sQteYPCBg&oq=&gs_lp=Egdnd3Mtd2l6IgBIAFAAWABwAHgAkAEAmAEAoAEAqgEAuAEByAEAmAIAoAIAmAMAkgcAoAcAsgcAuAcAwgcAyAcAgAgB&sclient=gws-wiz&udm=50&mtid=xHXvacmrI7ja5OUPocraEQ)
+- **Bookmark**: [Sem título](https://web.whatsapp.com/)
+- **Bookmark**: [Excalidraw Whiteboard](https://excalidraw.com/)
+- **Bookmark**: [SEI / MAPA](https://sei.agro.gov.br/sip/login.php?sigla_orgao_sistema=MAPA&sigla_sistema=SEI&infra_url=L3NlaS8=)
+- **Bookmark**: [Sem título](https://huggingface.co/)
+- **Bookmark**: [Sem título](https://discord.com/channels/@me)
+- **Bookmark**: [Sem título](https://supabase.com/)
+- **Bookmark**: [Sem título](https://www.perplexity.ai/?login-source=floatingSignup&login-new=false)
+- **Bookmark**: [Sem título](https://vercel.com/sukatas-projects)
+- **Bookmark**: [Sem título](https://chat.qwen.ai/)
+- **Bookmark**: [Sem título](https://lovable.dev/)
+- **Bookmark**: [Sem título](https://chatgpt.com/)
+- **Bookmark**: [Sem título](https://agent.minimax.io/)
+- **Bookmark**: [Sem título](https://gemini.google.com/)
+- **Bookmark**: [Sem título](https://prism.openai.com/)
+- **Bookmark**: [Phind](https://www.phind.com/search/site-reddit-com-r-singularity-890b538f-e9d6-4e20-9f7b-d6ede1f33f0a)
+- **Bookmark**: [GesutWiki](http://gesutwiki.conab.gov.br/wiki/index.php/P%C3%A1gina_principal)
+- **Bookmark**: [Sem título](https://www.wolframcloud.com/)
+- **Bookmark**: [Sem título](https://www.perplexity.ai/?login-source=oneTapHome&login-new=false)
+- **Bookmark**: [Sem título](https://github.com/compilatorum/cult/tree/main/data)
+- **Bookmark**: [Sem título](https://drive.google.com/drive/u/0/home)
+- **Bookmark**: [Sem título](https://copilot.microsoft.com/chats/NM4wn5CD5GYLph9XwSaqC)
+- **Bookmark**: [Sem título](https://mail.google.com/)
+- **Bookmark**: [Sem título](https://www.youtube.com/)
+- **Bookmark**: [Sem título](https://chat.deepseek.com/)
+- **Bookmark**: [Sem título](https://manus.im/)
+- **Bookmark**: [Sem título](https://notebooklm.google.com/)
+- **Bookmark**: [Sem título](https://suno.com/home)
+- **Bookmark**: [Sem título](https://creator.lottiefiles.com/)
+- **Bookmark**: [Sem título](https://unpaywall.org/)
+- **Bookmark**: [Sem título](https://studio.firebase.google.com/penel-86835241)
+- **Bookmark**: [Sem título](https://sougov.sigepe.gov.br/sougov/)
+- **Bookmark**: [Sem título](https://sentiencerising.com/?forum=sentience-rising-forum)
+- **Bookmark**: [Sem título](https://prompt-optimizer.io/)
+- **Bookmark**: [Sem título](https://sei.agro.gov.br/sei/controlador.php?acao=procedimento_trabalhar&acao_origem=procedimento_controlar&acao_retorno=procedimento_controlar&id_procedimento=54907410&infra_sistema=100000100&infra_unidade_atual=120000092&infra_hash=575b1a79196595da99bcf6c71bd2cbbe5011962374dc24868914d7ba399a092a)
+- **Bookmark**: [Sem título](https://pontoeletronico.conab.gov.br/veltiponto/workspace.jsf)
+- **Bookmark**: [Sem título](https://www.smalllanguagemodels.info/doku.php?id=start)
+- **Bookmark**: [Sem título](https://www.reddit.com/)
+- **Bookmark**: [Sem título](https://scholar.google.com/)
+- **Bookmark**: [Sem título](https://www.overleaf.com/project)
+- **Bookmark**: [The AI Rabbit Hole | Podcast on Spotify](https://open.spotify.com/show/7z2Tbysp35M861Btn5uEjZ?si=-Lix1NIKTbypOuyoX4mHIA&nd=1&dlsi=33b8f0fbfdca4d79)
+- **Bookmark**: [The AI Rabbit Hole | Substack](https://substack.com/@betterthinkersnotbetterai)
+- **Bookmark**: [Clareza Contextual: Glossário de Termos Chave : r/LinguisticsPrograming](https://www.reddit.com/r/LinguisticsPrograming/comments/1m3jzhu/contextual_clarity_glossary_of_key_terms/)
+- **Bookmark**: [O Fluxo de Trabalho do Caderno de Engenharia de Contexto Sem Código: Meu Fluxo de Trabalho de 9 Passos : r/LinguisticsPrograming](https://www.reddit.com/r/LinguisticsPrograming/comments/1lxrjk6/the_no_code_context_engineering_notebook_work/)
+- **Bookmark**: [Você ainda tá usando um modelo de IA só? Tá jogando xadrez com as regras do jogo da velha, mané. : r/LinguisticsPrograming](https://www.reddit.com/r/LinguisticsPrograming/comments/1mw1ch3/youre_still_using_one_ai_model_youre_playing/?share_id=s1kvRzJXbkPZzwBK9Kurb&utm_content=2&utm_medium=android_app&utm_name=androidcss&utm_source=share&utm_term=1)
+
+## Importação de SNAPSHOT em 2026-06-23 17:52:50
+
+## Importação de SNAPSHOT em 2026-06-23 17:54:37
+
+## Importação de SNAPSHOT em 2026-06-23 18:09:10
+
+## Importação de SNAPSHOT em 2026-06-23 18:14:18
+
+- **DAO Proposal**: [[6.44] [Social] Path forward on Working Groups for Term 7](https://snapshot.org/#/ens.eth/proposal/0xe4e1c052b2ea4f640cab27ddec326df6290d8996a9219b60cda4c4d4509f5f9a)
+- **DAO Proposal**: [[Social] ENSv2 Pricing: 5+ Character Name Adjustment, Multi-Year Discounts, Grace Period Change](https://snapshot.org/#/ens.eth/proposal/0xeba629f6c1600cceff07e01e922e4e61c7b19f9e04e03e89ec30500878cb6783)
+- **DAO Proposal**: [[6.42] [Social] SPP3: Program Authorization and Committee Model](https://snapshot.org/#/ens.eth/proposal/0x3e523451340e987e9d3745fb33585bd7136bb6fa8519691ba7b04fa160d4ab7b)
+- **DAO Proposal**: [[6.31] [Temp Check] Delegation Incentives Program](https://snapshot.org/#/ens.eth/proposal/0xf0ad5ad5a1ee353a65424a83e74f2b8846b16885a4be99af26b5162bfa78c644)
+- **DAO Proposal**: [[6.26] [Social] ENS Retro: An ENS DAO Retrospective & Stakeholder Analysis](https://snapshot.org/#/ens.eth/proposal/0x8d16992852893f05b23b0e26de27c9e6b2a8de1193c991e14f81ef13cd943517)
+- **DAO Proposal**: [[6.25] [Social] Replace the Working Groups with the ENS Admin Panel](https://snapshot.org/#/ens.eth/proposal/0xbc44d9714ee818da49c25998cabdbe745f939fef74923255c3571a00e8977e5d)
+- **DAO Proposal**: [[6.24.3] [Social] Funding Request - ENS Public Goods Working Group Term 6 (Oct. Window)](https://snapshot.org/#/ens.eth/proposal/0x7b603c5ada65cfcdbdfec9a33352edf731615fe96fbcc09daa7aa97b327e15ce)
+- **DAO Proposal**: [[6.24.2] [Social] Funding Request: ENS Ecosystem Working Group (Oct. Window)](https://snapshot.org/#/ens.eth/proposal/0x9b3f5463e52aadc35155e686f8416297b24e6c7e30cb527747e61cf17b42a5f6)
+- **DAO Proposal**: [[6.24.1] [Social] Funding Request: ENS Meta-Governance Working Group Term 6 (Oct. Window)](https://snapshot.org/#/ens.eth/proposal/0xc689edd77def6b9f6be6ca7fa1729e597c85ee12ae96e134d995a8b9fd78a21f)
+- **DAO Proposal**: [[EP6.16] [Social] Enhancing ENS Governance with Tally’s Enterprise Support](https://snapshot.org/#/ens.eth/proposal/0xf06f3ad61f9f77c8ed362dd54913cc44d030841eebebfffce4dd6605b1b0e6f3)
+
+## Importação de GITHUB em 2026-06-23 18:15:17
+
+- **Repo**: [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) | Linguagem: `Desconhecida`
+  *Descrição*: A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpathy's observations on LLM coding pitfalls.
+- **Repo**: [Anil-matcha/Free-AI-Social-Media-Scheduler](https://github.com/Anil-matcha/Free-AI-Social-Media-Scheduler) | Linguagem: `JavaScript`
+  *Descrição*: Free open-source AI social media scheduler — self-hostable alternative to Postiz, Buffer, and Hootsuite with built-in AI content generation.
+- **Repo**: [diegosouzapw/awesome-omni-skills](https://github.com/diegosouzapw/awesome-omni-skills) | Linguagem: `Python`
+  *Descrição*: Public repository of AI coding skills, curated improved best-practice skills, and runtime surfaces for CLI, API, MCP, and A2A.
+- **Repo**: [snubroot/Veo-3-Prompting-Guide](https://github.com/snubroot/Veo-3-Prompting-Guide) | Linguagem: `Desconhecida`
+  *Descrição*: Sem descrição
+- **Repo**: [VILA-Lab/Dive-into-Claude-Code](https://github.com/VILA-Lab/Dive-into-Claude-Code) | Linguagem: `Desconhecida`
+  *Descrição*: A Systematic Analysis and Discussion of Claude Code for Designing Today's and Future AI Agent Systems
+- **Repo**: [ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | Linguagem: `Python`
+  *Descrição*: A curated list of awesome Claude Skills, resources, and tools for customizing Claude AI workflows
+- **Repo**: [ai-boost/awesome-harness-engineering](https://github.com/ai-boost/awesome-harness-engineering) | Linguagem: `Python`
+  *Descrição*: Awesome list for AI agent harness engineering: tools, patterns, evals, memory, MCP, permissions, observability, and orchestration.
+- **Repo**: [walkinglabs/learn-harness-engineering](https://github.com/walkinglabs/learn-harness-engineering) | Linguagem: `TypeScript`
+  *Descrição*: Harness engineering beginner tutorial, from 0 to 1
+- **Repo**: [Exhen/claude-code-2.1.88](https://github.com/Exhen/claude-code-2.1.88) | Linguagem: `Desconhecida`
+  *Descrição*: Source code of @anthropic-ai/claude-code v2.1.88, extracted from the npm package's source map (cli.js.map). 1,906 TypeScript files recovered for reading and study.
+- **Repo**: [ultraworkers/claw-code](https://github.com/ultraworkers/claw-code) | Linguagem: `Rust`
+  *Descrição*: An agent-managed museum exhibit, built in Rust with Gajae-Code / LazyCodex — developed and maintained with no human intervention.
+- **Repo**: [code-yeongyu/oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) | Linguagem: `TypeScript`
+  *Descrição*: omo/lazycodex: The coding agent for tokenmaxxers;the one and only agent harness for complex codebases. For your Codex, for your OpenCode
+- **Repo**: [ebpa/tui.el](https://github.com/ebpa/tui.el) | Linguagem: `Emacs Lisp`
+  *Descrição*: An experimental text-based UI framework for Emacs modeled after React - **requires emacs 26.1 or newer**
+- **Repo**: [kickingvegas/casual](https://github.com/kickingvegas/casual) | Linguagem: `Emacs Lisp`
+  *Descrição*: A collection of opinionated keyboard-driven user interfaces for various built-in Emacs modes.
+- **Repo**: [daviwil/emacs-from-scratch](https://github.com/daviwil/emacs-from-scratch) | Linguagem: `Emacs Lisp`
+  *Descrição*: An example of a fully custom Emacs configuration developed live on YouTube!
+- **Repo**: [emacs-tw/awesome-emacs](https://github.com/emacs-tw/awesome-emacs) | Linguagem: `Desconhecida`
+  *Descrição*: A community driven list of useful Emacs packages, libraries and other items.
+- **Repo**: [T4P4N/Awesome-Termux](https://github.com/T4P4N/Awesome-Termux) | Linguagem: `Desconhecida`
+  *Descrição*: Awesome Termux :- Bash Scripts, Wiki, Articles,Shells & Many More...
+- **Repo**: [volcengine/MineContext](https://github.com/volcengine/MineContext) | Linguagem: `Python`
+  *Descrição*: MineContext is your proactive context-aware AI partner（Context-Engineering+ChatGPT Pulse）
+- **Repo**: [gemini-cli-extensions/workspace](https://github.com/gemini-cli-extensions/workspace) | Linguagem: `TypeScript`
+  *Descrição*: Access Google Workspace when using Gemini CLI
+- **Repo**: [router-for-me/CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI) | Linguagem: `Go`
+  *Descrição*: Wrap Antigravity, ChatGPT Codex, Claude Code, Grok Build as an OpenAI/Gemini/Claude/Codex compatible API service, allowing you to enjoy the free Gemini 3.1 Pro, GPT 5.5, Grok 4.3, Claude model through API
+- **Repo**: [google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli) | Linguagem: `TypeScript`
+  *Descrição*: An open-source AI agent that brings the power of Gemini directly into your terminal.
+- **Repo**: [agarrharr/awesome-cli-apps](https://github.com/agarrharr/awesome-cli-apps) | Linguagem: `Shell`
+  *Descrição*: 🖥 📊 🕹 🛠 A curated list of command line apps
+- **Repo**: [affaan-m/ECC](https://github.com/affaan-m/ECC) | Linguagem: `JavaScript`
+  *Descrição*: The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond.
+- **Repo**: [romkatv/powerlevel10k](https://github.com/romkatv/powerlevel10k) | Linguagem: `Shell`
+  *Descrição*: A Zsh theme
+- **Repo**: [hyhAsma/termux-api-tools-mcp-server](https://github.com/hyhAsma/termux-api-tools-mcp-server) | Linguagem: `Python`
+  *Descrição*: 基于Termux-API的部分指令，用于MCP客户端操控Android设备的服务端
+- **Repo**: [eslamegy173/termux-api-mcp](https://github.com/eslamegy173/termux-api-mcp) | Linguagem: `Go`
+  *Descrição*: A simple, self-hosted MCP server in Go that provides a structured API for Termux:API commands.
+- **Repo**: [anomalyco/opencode](https://github.com/anomalyco/opencode) | Linguagem: `TypeScript`
+  *Descrição*: The open source coding agent.
+- **Repo**: [termux/termux-app](https://github.com/termux/termux-app) | Linguagem: `Java`
+  *Descrição*: Termux - a terminal emulator application for Android OS extendible by variety of packages.
+- **Repo**: [smp-sandramariapereira/dupla-evolutiva](https://github.com/smp-sandramariapereira/dupla-evolutiva) | Linguagem: `Desconhecida`
+  *Descrição*: Sem descrição
+- **Repo**: [compilatorum/web3-launchpad-pro](https://github.com/compilatorum/web3-launchpad-pro) | Linguagem: `TypeScript`
+  *Descrição*: Sem descrição
+- **Repo**: [orenef/awesome-gemini-cli-commands](https://github.com/orenef/awesome-gemini-cli-commands) | Linguagem: `Desconhecida`
+  *Descrição*: Gemini CLI supports custom commands, enabling users to define agent-like modes. This repo collects **useful commands, patterns, and inspirations** to supercharge your developer workflow.

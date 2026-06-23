@@ -88,3 +88,29 @@ Todos os axiomas em `principios_canonicos.md` devem se referenciar mutuamente us
 
 ### 📂 2.2 Geração Automática do Grafo de Conhecimento
 Criaremos um script compilador em Python (`compile_graph.py`) no CLI que lê a pasta `ontologia/`, resolve as dependências descritas no frontmatter YAML (`referencias`) e nos links internos, exportando um arquivo JSON relacional (nós e arestas) compatível com ferramentas de PKM (como Obsidian, Logseq ou visualizadores interativos em D3.js).
+
+---
+
+## 🧼 3. Deduplicação, Higienização e Mitigação de Latência
+
+### 🪞 3.1 Estratégia de Deduplicação de Arquivos Heterogêneos (NotebookLM)
+* **Problema**: Arquivos exportados do NotebookLM (áudios, vídeos, PDFs, metadados) estão distribuídos em 4 drives, contendo variações de nomes e tamanhos ligeiramente diferentes. Verificação de hash binária (MD5) pura falha nestes cenários.
+* **Solução Técnica**:
+  * Utilizar **Similaridade de Cosseno** baseada em vetores de TF-IDF ou embeddings do conteúdo textual extraído das transcrições e PDFs.
+  * Estabelecer um limiar de **92% de similaridade semântica** para agrupar e rotular arquivos duplicados.
+  * Manter na base unificada (Drive `xinaya` com limite de 15GB) apenas a versão mais recente ou mais rica em termos de metadados, arquivando as demais versões redundantes.
+
+### 🖼️ 3.2 Higienização de Infográficos e Imagens (`unamed(x).png`)
+* **Problema**: Infográficos úteis são frequentemente salvos com nomes genéricos como `unamed(1).png`, que degradam a qualidade da busca semântica e a organização do grafo de conhecimento.
+* **Solução Técnica**:
+  * Implementar um pipeline de OCR local (ex: via `tesseract-ocr` ou modelos leves de visão) integrado na triagem de mídias.
+  * O OCR extrai os termos-chave mais relevantes da imagem e os tópicos presentes no infográfico.
+  * O arquivo é renomeado dinamicamente seguindo o padrão canonizado: `infografico_<topicos_chave_extraidos_ocr>.png`, com o texto OCR anexado no frontmatter Markdown que representa a imagem na ontologia.
+
+### ⚡ 3.3 Mitigação de Latência em Acessos Remotos (Rclone RAG)
+* **Problema**: Executar buscas remotas e RAG diretamente nas pastas montadas do Google Drive (rclone) introduz latência severa incompatível com a velocidade exigida pelo CLI.
+* **Solução Técnica**:
+  * **Sincronização Incremental com Local Cache**: O banco de dados local SQLite (`/home/sukata/chatlogs/cache_processamento.db`) atuará como o cache de alta performance.
+  * O pipeline calculará hashes MD5 dos arquivos no Drive via metadados rápidos fornecidos pelo rclone. Apenas os arquivos com hash diferente ou novos arquivos serão puxados fisicamente para o diretório `/takeout/` local.
+  * O RAG fará consultas no cache local SQLite em vez de consultar a nuvem, reduzindo a latência a milissegundos e permitindo operações rápidas no CLI.
+

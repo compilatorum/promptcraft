@@ -12,7 +12,10 @@ from promptcraft import (
     get_volatility_score,
     calculate_semantic_overlap,
     summarize_large_content,
-    fetch_url_text
+    fetch_url_text,
+    parse_bookmarks_html,
+    fetch_semantic_scholar_recommendations,
+    fetch_github_starred
 )
 
 def test_load_env():
@@ -402,5 +405,105 @@ def test_agent_generator(monkeypatch):
     assert "=== AGENT_PROMPT_START ===" in output
     assert "Olá Agente" in output
     assert "=== AGENT_PROMPT_END ===" in output
+
+import json
+
+def test_parse_bookmarks_html():
+    html_content = """
+    <!DOCTYPE NETSCAPE-Bookmark-file-1>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+    <TITLE>Bookmarks</TITLE>
+    <H1>Bookmarks</H1>
+    <DL><p>
+        <DT><A HREF="https://github.com/compilatorum" ADD_DATE="1719111111" LAST_MODIFIED="1719222222">Compilatorum GitHub</A>
+        <DT><A HREF="https://arxiv.org/abs/2406.00000">Awesome AI Paper</A>
+    </DL><p>
+    """
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, encoding='utf-8') as f:
+        f.write(html_content)
+        temp_path = f.name
+    try:
+        bookmarks = parse_bookmarks_html(temp_path)
+        assert len(bookmarks) == 2
+        assert bookmarks[0]["url"] == "https://github.com/compilatorum"
+        assert bookmarks[0]["title"] == "Compilatorum GitHub"
+        assert bookmarks[1]["url"] == "https://arxiv.org/abs/2406.00000"
+        assert bookmarks[1]["title"] == "Awesome AI Paper"
+    finally:
+        os.remove(temp_path)
+
+def test_fetch_semantic_scholar_recommendations():
+    from unittest.mock import patch, MagicMock
+    
+    mock_response_data = {
+        "recommendedPapers": [
+            {
+                "title": "Adjacent Paper 1",
+                "url": "https://semanticscholar.org/paper1",
+                "abstract": "Abstract of paper 1"
+            },
+            {
+                "title": "Adjacent Paper 2",
+                "url": "https://semanticscholar.org/paper2",
+                "abstract": None
+            }
+        ]
+    }
+    
+    class MockResponse:
+        def __init__(self, data):
+            self.data = json.dumps(data).encode("utf-8")
+        def read(self):
+            return self.data
+        def __enter__(self):
+            return self
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+    with patch('urllib.request.urlopen', return_value=MockResponse(mock_response_data)):
+        recs = fetch_semantic_scholar_recommendations("2406.00000")
+        assert len(recs) == 2
+        assert recs[0]["title"] == "Adjacent Paper 1"
+        assert recs[0]["url"] == "https://semanticscholar.org/paper1"
+        assert recs[0]["summary"] == "Abstract of paper 1"
+        assert recs[1]["title"] == "Adjacent Paper 2"
+        assert recs[1]["summary"] == "Sem abstract disponível"
+
+def test_fetch_github_starred_authenticated(monkeypatch):
+    import subprocess
+    
+    mock_gh_output = [
+        {
+            "full_name": "owner/repo1",
+            "description": "First repo",
+            "html_url": "https://github.com/owner/repo1",
+            "language": "Python"
+        },
+        {
+            "full_name": "owner/repo2",
+            "description": None,
+            "html_url": "https://github.com/owner/repo2",
+            "language": None
+        }
+    ]
+    
+    def mock_run(cmd, capture_output, text, timeout):
+        class CompletedProcess:
+            returncode = 0
+            stdout = json.dumps(mock_gh_output)
+            stderr = ""
+        return CompletedProcess()
+        
+    monkeypatch.setattr(subprocess, "run", mock_run)
+    
+    starred = fetch_github_starred(None)
+    assert len(starred) == 2
+    assert starred[0]["name"] == "owner/repo1"
+    assert starred[0]["description"] == "First repo"
+    assert starred[0]["language"] == "Python"
+    assert starred[1]["name"] == "owner/repo2"
+    assert starred[1]["description"] == "Sem descrição"
+    assert starred[1]["language"] == "Desconhecida"
+
 
 
