@@ -1,6 +1,14 @@
-# 🧬 promptcraft: Motor Nexialista de Destilação de Conhecimento
+# 🧬 promptcraft: Motor de Destilação de Conhecimento
 
 Este repositório implementa o **Motor Nexialista de Destilação de Conhecimento** conforme especificado em `EpistemoAutomatic_PromptEngSpec.md`. O objetivo deste sistema é extrair os axiomas fundamentais de fontes de conhecimento bruto, integrando-os de forma iterativa e auto-regenerativa em uma ontologia viva.
+
+---
+
+## 🔮 Planejamento de Escala e Integração Epistêmica
+
+O Promptcraft foi arquitetado para ir além da triagem e ingestão local. Para ver os planos detalhados de expansão e especificações de engenharia para cada tipo de dados heterogêneos (arXiv citation graphs, GitHub Starred readme parser, dados financeiros quantitativos, governance de DAOs, redes sociais e sincronização com o NotebookLM), consulte o documento mestre:
+
+👉 **[Planejamento de Escala Epistêmica](file:///home/sukata/promptcraft/ontologia/planejamento_escala.md)**
 
 ---
 
