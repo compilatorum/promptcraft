@@ -102,6 +102,8 @@ class HTMLTextExtractor(HTMLParser):
         return "\n".join(self.text_parts)
 
 def fetch_url_text(url):
+    import urllib.request
+    import urllib.parse
     log_info(f"Buscando conteúdo da URL: {url} ...")
     
     # Check if this is a YouTube video URL
