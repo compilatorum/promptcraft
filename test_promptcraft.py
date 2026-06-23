@@ -136,6 +136,29 @@ UC789,https://youtube.com/c/novotempo,Novo Tempo
     finally:
         os.remove(temp_path_pt)
 
+def test_parse_youtube_playlists():
+    csv_playlist = """ID do vídeo,Carimbo de data/hora da criação do vídeo da playlist
+S6xzKM5UuOM,2026-04-12T23:04:25+00:00
+CQEHU5ryPfQ,2026-04-05T20:57:38+00:00
+"""
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, encoding='utf-8') as f:
+        f.write(csv_playlist)
+        temp_path = f.name
+        
+    try:
+        videos = parse_youtube_subscriptions(temp_path)
+        assert len(videos) == 2
+        assert videos[0]["id"] == "S6xzKM5UuOM"
+        assert videos[0]["title"] == "Vídeo S6xzKM5UuOM"
+        assert videos[0]["url"] == "https://www.youtube.com/watch?v=S6xzKM5UuOM"
+        assert videos[0]["type"] == "video"
+        assert videos[1]["id"] == "CQEHU5ryPfQ"
+        assert videos[1]["title"] == "Vídeo CQEHU5ryPfQ"
+        assert videos[1]["url"] == "https://www.youtube.com/watch?v=CQEHU5ryPfQ"
+        assert videos[1]["type"] == "video"
+    finally:
+        os.remove(temp_path)
+
 def test_parse_reddit_posts():
     # Test JSON format
     reddit_json = """[

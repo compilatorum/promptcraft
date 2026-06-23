@@ -143,3 +143,83 @@ A ingestão de fontes exige um filtro prévio de proporção entre conteúdo út
 * **Rastreabilidade**: Adicionados campos de metadados estruturados (`confianca`, `evidencias_qtd`, `contradicoes_qtd`, `referencias`) para cada um dos axiomas da base canônica.
 
 ---
+
+## Processamento de Fonte (document) - 2026-06-23 12:08:21
+- **Referência**: manual-input
+- **Domínio**: classic-site
+
+### Diff Semântico (Etapa 3)
+<<<<
+---
+axioma: Isomorfismo de Auto-referência Recursiva
+confianca: alto
+evidencias_qtd: 1
+contradicoes_qtd: 0
+referencias:
+  - doc:manual-input
+---
+Ponteiros auto-referenciados ou autocitações em hipertextos (como links internos para `home.html`) compartilham invariantes estruturais com ciclos recursivos em grafos e loops em sistemas distribuídos, demandando salvaguardas de terminação em varreduras.
+
+---
+axioma: Acoplamento e Dependência Estrutural
+confianca: medio
+evidencias_qtd: 1
+contradicoes_qtd: 0
+referencias:
+  - doc:manual-input
+---
+O acoplamento rígido de uma base ou aplicação a ecossistemas fechados (como `Google Sites`) assemelha-se ao Vendor Lock-in em arquitetura de nuvem, requerendo camadas de segurança e adaptadores genéricos para portabilidade.
+
+---
+axioma: Filtro de Densidade Semântica
+confianca: alto
+evidencias_qtd: 1
+contradicoes_qtd: 0
+referencias:
+  - doc:manual-input
+---
+A ingestão de fontes exige um filtro prévio de proporção entre conteúdo útil e ruído estrutural/boilerplate. Se a densidade semântica (tokens informativos / total de bytes) for inferior a um limite crítico, a fonte deve ser pré-filtrada.
+====
+---
+axioma: Isomorfismo de Auto-referência Recursiva
+confianca: alto
+evidencias_qtd: 2
+contradicoes_qtd: 0
+referencias:
+  - doc:manual-input
+  - doc:takeout-g34t34t4-home
+---
+Ponteiros auto-referenciados ou autocitações em hipertextos (como links internos para `home.html`) compartilham invariantes estruturais com ciclos recursivos em grafos e loops em sistemas distribuídos, demandando salvaguardas de terminação em varreduras. [ATUALIZADO_2026]
+
+---
+axioma: Acoplamento e Dependência Estrutural
+confianca: medio
+evidencias_qtd: 2
+contradicoes_qtd: 0
+referencias:
+  - doc:manual-input
+  - doc:takeout-g34t34t4-home
+---
+O acoplamento rígido de uma base ou aplicação a ecossistemas fechados (como `Google Sites`) assemelha-se ao Vendor Lock-in em arquitetura de nuvem, requerendo camadas de segurança e adaptadores genéricos para portabilidade. [ATUALIZADO_2026]
+
+---
+axioma: Filtro de Densidade Semântica
+confianca: alto
+evidencias_qtd: 2
+contradicoes_qtd: 0
+referencias:
+  - doc:manual-input
+  - doc:takeout-g34t34t4-home
+---
+A ingestão de fontes exige um filtro prévio de proporção entre conteúdo útil e ruído estrutural/boilerplate. Se a densidade semântica (tokens informativos / total de bytes) for inferior a um limite crítico, a fonte deve ser pré-filtrada. [ATUALIZADO_2026]
+>>>>
+
+=== Lacunas Abertas ===
+1. Como projetar filtros adaptativos de densidade semântica para diferentes tipos de codificação e layouts de página?
+2. Como indexadores podem detectar de forma preventiva recursividade ou auto-referência infinita?
+3. Quais heurísticas quantitativas medem a densidade de informação útil antes de processar uma fonte?
+
+=== Sugestão de Próxima Fonte ===
+Estudar logs de tráfego de indexadores web open-source (como Apache Nutch) para avaliar limites práticos de filtros de redundância.
+
+---

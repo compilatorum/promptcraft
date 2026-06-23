@@ -34,29 +34,32 @@ A modelagem de prompts estruturados e algoritmos de IA como interpretadores lóg
 ---
 axioma: Isomorfismo de Auto-referência Recursiva
 confianca: alto
-evidencias_qtd: 1
+evidencias_qtd: 2
 contradicoes_qtd: 0
 referencias:
   - doc:manual-input
+  - doc:takeout-g34t34t4-home
 ---
-Ponteiros auto-referenciados ou autocitações em hipertextos (como links internos para `home.html`) compartilham invariantes estruturais com ciclos recursivos em grafos e loops em sistemas distribuídos, demandando salvaguardas de terminação em varreduras.
+Ponteiros auto-referenciados ou autocitações em hipertextos (como links internos para `home.html`) compartilham invariantes estruturais com ciclos recursivos em grafos e loops em sistemas distribuídos, demandando salvaguardas de terminação em varreduras. [ATUALIZADO_2026]
 
 ---
 axioma: Acoplamento e Dependência Estrutural
 confianca: medio
-evidencias_qtd: 1
+evidencias_qtd: 2
 contradicoes_qtd: 0
 referencias:
   - doc:manual-input
+  - doc:takeout-g34t34t4-home
 ---
-O acoplamento rígido de uma base ou aplicação a ecossistemas fechados (como `Google Sites`) assemelha-se ao Vendor Lock-in em arquitetura de nuvem, requerendo camadas de segurança e adaptadores genéricos para portabilidade.
+O acoplamento rígido de uma base ou aplicação a ecossistemas fechados (como `Google Sites`) assemelha-se ao Vendor Lock-in em arquitetura de nuvem, requerendo camadas de segurança e adaptadores genéricos para portabilidade. [ATUALIZADO_2026]
 
 ---
 axioma: Filtro de Densidade Semântica
 confianca: alto
-evidencias_qtd: 1
+evidencias_qtd: 2
 contradicoes_qtd: 0
 referencias:
   - doc:manual-input
+  - doc:takeout-g34t34t4-home
 ---
-A ingestão de fontes exige um filtro prévio de proporção entre conteúdo útil e ruído estrutural/boilerplate. Se a densidade semântica (tokens informativos / total de bytes) for inferior a um limite crítico, a fonte deve ser pré-filtrada.
+A ingestão de fontes exige um filtro prévio de proporção entre conteúdo útil e ruído estrutural/boilerplate. Se a densidade semântica (tokens informativos / total de bytes) for inferior a um limite crítico, a fonte deve ser pré-filtrada. [ATUALIZADO_2026]

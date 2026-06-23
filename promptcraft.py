@@ -1183,6 +1183,32 @@ def parse_youtube_subscriptions(csv_path):
         reader = csv.reader(lines)
         header = next(reader, None)
         
+        # Detect if it is a playlist CSV or subscriptions CSV
+        is_playlist = False
+        col_video_id = -1
+        if header:
+            header_joined = "".join(header).lower()
+            if "vídeo" in header_joined or "video" in header_joined:
+                is_playlist = True
+                for idx, h in enumerate(header):
+                    h_lower = h.lower().strip()
+                    if "id" in h_lower:
+                        col_video_id = idx
+                        break
+        
+        if is_playlist and col_video_id != -1:
+            for row in reader:
+                if not row or len(row) <= col_video_id:
+                    continue
+                video_id = row[col_video_id].strip()
+                result.append({
+                    "id": video_id,
+                    "title": f"Vídeo {video_id}",
+                    "url": f"https://www.youtube.com/watch?v={video_id}",
+                    "type": "video"
+                })
+            return result
+            
         col_id, col_title, col_url = 0, 1, 2
         if header:
             for idx, h in enumerate(header):
@@ -1200,7 +1226,8 @@ def parse_youtube_subscriptions(csv_path):
             result.append({
                 "id": row[col_id].strip(),
                 "title": row[col_title].strip(),
-                "url": row[col_url].strip()
+                "url": row[col_url].strip(),
+                "type": "channel"
             })
     return result
 
@@ -1322,7 +1349,10 @@ def cmd_importar(args):
         
     for entry in entries:
         if import_type == "youtube":
-            lines.append(f"- **Canal**: [{entry['title']}]({entry['url']}) (ID: `{entry['id']}`)")
+            if entry.get("type") == "video":
+                lines.append(f"- **Vídeo**: [{entry['title']}]({entry['url']}) (ID: `{entry['id']}`)")
+            else:
+                lines.append(f"- **Canal**: [{entry['title']}]({entry['url']}) (ID: `{entry['id']}`)")
         elif import_type == "github":
             lines.append(f"- **Repo**: [{entry['name']}]({entry['url']}) | Linguagem: `{entry['language']}`\n  *Descrição*: {entry['description']}")
         elif import_type == "reddit":

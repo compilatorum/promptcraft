@@ -7,3 +7,4 @@ Perguntas sem resposta geradas pelo sistema.
 3. Quais são as restrições e constantes que regem a eficiência operacional em diferentes contextos?
 4. Como indexadores podem detectar de forma preventiva recursividade ou auto-referência infinita?
 5. Quais heurísticas quantitativas medem a densidade de informação útil antes de processar uma fonte?
+6. Como projetar filtros adaptativos de densidade semântica para diferentes tipos de codificação e layouts de página?
