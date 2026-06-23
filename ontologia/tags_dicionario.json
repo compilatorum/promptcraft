@@ -1,0 +1,33 @@
+{
+  "lexical_markers": {
+    "epistemic": ["axioma", "ontologia", "gnosio", "heurística", "canon", "fenomenologia", "hipótese", "invariante", "epistemologia"],
+    "syntactic": ["## USER:", "## ASSISTANT:", "#+TITLE:", "#+FILETAGS:", "- **Bookmark**:", "- **Repo**:", "- **arXiv Paper**:"],
+    "semantic": ["auto-regeneração", "redundante-confirmativo", "nó-novo-de-conhecimento", "ruído-de-baixa-densidade", "isomorfismo", "acoplamento-rígido"]
+  },
+  "tags": {
+    "IA_PESQUISA": {
+      "description": "Inteligência Artificial, Aprendizado de Máquina e Modelagem Epistêmica",
+      "subtags": ["engenharia_de_prompts", "rag_sistemas", "modelos_locais_slm", "fine_tuning_lora", "nlp_processamento"]
+    },
+    "DESENVOLVIMENTO": {
+      "description": "Engenharia de Software, Ferramentas CLI e Automação de Sistemas",
+      "subtags": ["github_starred", "mcp_protocol", "cdp_devtools", "emacs_worker", "automation_scripts"]
+    },
+    "REGENERACAO_REFI": {
+      "description": "Finanças Regenerativas, Organizações Autônomas e Governança Web3",
+      "subtags": ["dao_governanca", "snapshot_voting", "onchain_metrics", "blockchains_regenerativos", "impact_investing"]
+    },
+    "CONHECIMENTO_PKM": {
+      "description": "Sistemas de Gestão de Conhecimento Pessoal e Grafos de Conhecimento",
+      "subtags": ["org_roam_v2", "elfeed_rss", "llm_wiki_v2", "denote_metadata", "knowledge_graph"]
+    },
+    "MIDIA_ACADEMICO": {
+      "description": "Canais de Comunicação, Papers Científicos e Ingestão de Mídia",
+      "subtags": ["youtube_transcricoes", "scholar_papers", "browser_bookmarks", "watch_history"]
+    },
+    "CHATLOGS_HISTORICO": {
+      "description": "Históricos de Conversação com Modelos de Linguagem e Chunks Sanitizados",
+      "subtags": ["sessao_dialogo", "chunks_sanitizados", "fine_tuning_alpaca", "conflitos_epistemicos"]
+    }
+  }
+}
