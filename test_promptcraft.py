@@ -342,3 +342,27 @@ def test_multiple_keys_fallback(monkeypatch):
     assert calls[0] == ("openai", "key_first")
     assert calls[1] == ("openai", "key_second")
 
+def test_agent_generator(monkeypatch):
+    import promptcraft
+    import sys
+    import io
+    
+    # Pre-populate stdin with responses and the end marker
+    simulated_input = "Primeira linha do agente\nSegunda linha do agente\n=== AGENT_RESPONSE_END ===\n"
+    monkeypatch.setattr(sys, "stdin", io.StringIO(simulated_input))
+    
+    # Capture stdout
+    stdout_capture = io.StringIO()
+    monkeypatch.setattr(sys, "stdout", stdout_capture)
+    
+    generate = promptcraft.get_generator("agent", "self", "agent_key", 0.7)
+    res = generate("Olá Agente")
+    
+    assert res == "Primeira linha do agente\nSegunda linha do agente"
+    
+    output = stdout_capture.getvalue()
+    assert "=== AGENT_PROMPT_START ===" in output
+    assert "Olá Agente" in output
+    assert "=== AGENT_PROMPT_END ===" in output
+
+

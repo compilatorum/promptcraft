@@ -162,8 +162,65 @@ python3 promptcraft.py pesquisar \
 
 ## ⚙️ Parâmetros Adicionais Comuns
 
-* `--provider`: Define o provedor do LLM (`openai`, `anthropic`, `gemini`). Se não informado, tenta detectar automaticamente a partir das chaves configuradas.
-* `--model`: Permite usar um modelo de LLM personalizado (ex: `gpt-4o`, `claude-3-5-sonnet-20240620`, `gemini-1.5-pro`).
+* `--provider`: Define o provedor do LLM (`openai`, `anthropic`, `gemini`, `huggingface`, `agent`, `antigravity`). Se não informado, tenta detectar automaticamente a partir das chaves configuradas.
+* `--model`: Permite usar um modelo de LLM personalizado.
 * `--temperature`: Controla a criatividade e rigor factual do LLM (default: `0.2`).
 * `--api-key`: Permite passar a chave diretamente via comando.
+
+---
+
+## 🤖 Integração do Provedor de Agente Autônomo (`agent`)
+
+O Motor Promptcraft agora possui suporte nativo ao provedor `"agent"` (ou `"antigravity"`), permitindo que **o próprio agente executor (Antigravity)** funcione como backend do LLM sem necessidade de chaves de API externas.
+
+### Como funciona
+1. Quando o `--provider agent` é selecionado, o motor escreve o prompt no terminal envolto por marcadores delimitadores:
+   ```text
+   === AGENT_PROMPT_START ===
+   [conteúdo do prompt]
+   === AGENT_PROMPT_END ===
+   ```
+2. O CLI entra em suspensão e aguarda a entrada do agente no `stdin`.
+3. O agente processa a requisição usando sua própria inteligência cognitiva e envia o resultado no terminal de fundo, finalizando com a linha:
+   ```text
+   === AGENT_RESPONSE_END ===
+   ```
+4. O CLI detecta a quebra de linha do delimitador, assimila a resposta e avança no pipeline.
+
+Este ciclo de interações em loop fecha o círculo de **sistemas de segunda ordem**, onde o agente opera a ferramenta que o invoca.
+
+---
+
+## 🔮 Roadmap de Extensibilidade para Novas Fontes de Dados
+
+Para evoluir a esteira de ingestão e abranger o espectro completo do Manifesto Oms-Sistêmico, o Promptcraft deve expandir sua infraestrutura de coletores para os seguintes formatos:
+
+### 🌐 1. Hiperlinks e Web Links em Geral
+* **Arquitetura de Ingestão**: Web scrapers com suporte a renderização de Single Page Applications (SPAs) e extração de metadados semânticos.
+* **Metodologia de Destilação**: Algoritmos de limpeza para remoção de menus (`<nav>`), propagandas e rodapés, convertendo o conteúdo útil em Markdown estruturado que preserva apenas os links internos/externos relevantes para mapeamento topológico.
+
+### 💻 2. Repositórios do GitHub (Bookmarks & Código)
+* **Arquitetura de Ingestão**: Consumo incremental da API de Stars do GitHub.
+* **Metodologia de Destilação**: Varredura recursiva de arquivos `README.md`, `ARCHITECTURE.md` e tags de tópicos do repositório para mapeamento de isomorfismos arquiteturais e agregação de padrões em clusters no `principios_canonicos.md`.
+
+### 🔬 3. Árvore de Citações de Artigos Científicos (arXiv / Scholar)
+* **Arquitetura de Ingestão**: Integração com a API do Semantic Scholar (`api.semanticscholar.org`).
+* **Metodologia de Destilação**: Coleta dos grafos de citações e referências dos artigos ingeridos. Nós com alta centralidade de co-citação são promovidos como axiomas pilares, enquanto conflitos conceituais na literatura são exportados como novas perguntas abertas em `lacunas_abertas.md`.
+
+### 📓 4. Compartilhamento de Cadernos (NotebookLM / Jupyter / Colab)
+* **Arquitetura de Ingestão**: Extração de células de notebooks (arquivos `.ipynb`) e transcrições geradas pelo NotebookLM (MP3/PDF).
+* **Metodologia de Destilação**: Processamento diferenciado de código (execução lógica), comentários (intenção metodológica) e logs de saída. Casos de uso de código que validam premissas teóricas alimentam as asserções de invariante do sistema.
+
+### 📊 5. Monitoramento de Dados Quantitativos e Métricas Financeiras
+* **Arquitetura de Ingestão**: Integração de cronjobs (via agendador do agy) que consultam feeds estruturados JSON/CSV de dados de mercado (ex: inflação, volatilidade de ativos).
+* **Metodologia de Destilação**: Conversão de séries temporais em métricas matemáticas de controle de risco, atualizadas dinamicamente via frontmatter YAML na base de axiomas.
+
+### 👥 6. Comunidades e Redes Sociais (Reddit / Twitter / Farcaster)
+* **Arquitetura de Ingestão**: Parsers de discussões em threads utilizando APIs de redes descentralizadas ou arquivos de exportação.
+* **Metodologia de Destilação**: Agrupamento semântico de discussões para detecção de consensos de comunidade, tendências emergentes e refutação de boatos (ruído semântico).
+
+### 🏛️ 7. Governança e Processos em DAOs
+* **Arquitetura de Ingestão**: Consumo da API do Snapshot (votações de propostas) e governança em redes EVM.
+* **Metodologia de Destilação**: Rastreamento de propostas aprovadas e discussões em fóruns (Discourse) para alimentar a ontologia com regras pragmáticas de governança descentralizada e lições aprendidas de incentivo/conflito de agentes.
+
 

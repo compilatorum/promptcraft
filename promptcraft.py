@@ -218,6 +218,9 @@ def resolve_all_api_keys(provider, cli_key=None):
     Resolves all configured API keys for a provider.
     Returns a list of strings (keys).
     """
+    if provider in ["agent", "antigravity"]:
+        return ["agent_key"]
+        
     if cli_key:
         return [cli_key]
         
@@ -312,7 +315,8 @@ def autodetect_provider_and_model():
                 return "gemini", "gemini-1.5-flash", key
             elif prov == "huggingface":
                 return "huggingface", "meta-llama/Llama-3.3-70B-Instruct", key
-    return None, None, None
+    # Fallback to agent provider if no keys are found
+    return "agent", "self", "agent_key"
 
 def get_generator(provider, model_name, api_key, temperature):
     if provider == "openai":
@@ -389,6 +393,26 @@ def get_generator(provider, model_name, api_key, temperature):
                     error_details = e.read().decode('utf-8')
                     raise Exception(f"Erro na API Hugging Face: {e}. Detalhes: {error_details}")
                 raise Exception(f"Erro na API Hugging Face: {e}")
+        return generate
+    elif provider in ["agent", "antigravity"]:
+        def generate(prompt):
+            print("\n=== AGENT_PROMPT_START ===")
+            print(prompt)
+            print("=== AGENT_PROMPT_END ===")
+            print("\n[Aguardando resposta do agente Antigravity. Insira a resposta e finalize com a linha '=== AGENT_RESPONSE_END ===']")
+            sys.stdout.flush()
+            lines = []
+            while True:
+                try:
+                    line = sys.stdin.readline()
+                    if not line:
+                        break
+                    if line.strip() == "=== AGENT_RESPONSE_END ===":
+                        break
+                    lines.append(line)
+                except KeyboardInterrupt:
+                    break
+            return "".join(lines).strip()
         return generate
     else:
         log_error(f"Provedor desconhecido '{provider}'")
@@ -964,7 +988,7 @@ def get_generator_with_fallback(args):
     cli_model = args.model
     cli_key = args.api_key
     
-    rotation_order = ["openai", "anthropic", "gemini", "huggingface"]
+    rotation_order = ["openai", "anthropic", "gemini", "huggingface", "agent"]
     
     if cli_provider:
         if cli_provider in rotation_order:
@@ -980,7 +1004,9 @@ def get_generator_with_fallback(args):
                     "openai": "gpt-4o-mini",
                     "anthropic": "claude-3-5-sonnet-20240620",
                     "gemini": "gemini-1.5-flash",
-                    "huggingface": "meta-llama/Llama-3.3-70B-Instruct"
+                    "huggingface": "meta-llama/Llama-3.3-70B-Instruct",
+                    "agent": "self",
+                    "antigravity": "self"
                 }
                 model = default_models.get(prov)
             available_providers.append((prov, model, key))
@@ -1588,7 +1614,7 @@ def main():
     group_pesq.add_argument("--file", help="Arquivo local contendo dados de escopo.")
     group_pesq.add_argument("--url", help="URL do site contendo dados de escopo.")
     parser_pesq.add_argument("--line", default="Engenharia Simbólica de Portfólios Regenerativos", help="Linha de pesquisa / tema principal.")
-    parser_pesq.add_argument("--provider", choices=["openai", "anthropic", "gemini", "huggingface"], help="Provedor do LLM.")
+    parser_pesq.add_argument("--provider", choices=["openai", "anthropic", "gemini", "huggingface", "agent", "antigravity"], help="Provedor do LLM.")
     parser_pesq.add_argument("--model", help="Modelo de LLM específico.")
     parser_pesq.add_argument("--api-key", help="Chave de API manual.")
     parser_pesq.add_argument("--temperature", type=float, default=0.2, help="Temperatura (default: 0.2).")
@@ -1606,7 +1632,7 @@ def main():
         group.add_argument("--url", help="URL do site para obter o conteúdo.")
 
         # Provider configurations
-        p.add_argument("--provider", choices=["openai", "anthropic", "gemini", "huggingface"], help="Provedor do LLM.")
+        p.add_argument("--provider", choices=["openai", "anthropic", "gemini", "huggingface", "agent", "antigravity"], help="Provedor do LLM.")
         p.add_argument("--model", help="Modelo de LLM específico (ex: gpt-4o, claude-3-5-sonnet-20240620, gemini-1.5-pro).")
         p.add_argument("--api-key", help="Chave de API manual para o provedor.")
         p.add_argument("--temperature", type=float, default=0.2, help="Temperatura para a geração (default: 0.2).")
@@ -1619,7 +1645,7 @@ def main():
 
     # Provider configurations for command 'refatorar' and 'auditar'
     for p in [subparsers.choices["refatorar"], subparsers.choices["auditar"]]:
-        p.add_argument("--provider", choices=["openai", "anthropic", "gemini", "huggingface"], help="Provedor do LLM.")
+        p.add_argument("--provider", choices=["openai", "anthropic", "gemini", "huggingface", "agent", "antigravity"], help="Provedor do LLM.")
         p.add_argument("--model", help="Modelo de LLM específico.")
         p.add_argument("--api-key", help="Chave de API manual.")
         p.add_argument("--temperature", type=float, default=0.2, help="Temperatura (default: 0.2).")
