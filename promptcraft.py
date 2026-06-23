@@ -1431,9 +1431,18 @@ def cmd_importar(args):
         try:
             entries = parse_bookmarks_html(args.file)
             log_success(f"Carregados {len(entries)} favoritos do arquivo {args.file}.")
-            if len(entries) > 1000:
-                log_warning(f"Alta quantidade de favoritos detectada ({len(entries)}). Limitando exibição para os primeiros 50 em fontes_importadas.md, mas salvando todos.")
-                entries = entries[:50]
+            
+            # Save ALL bookmarks to a dedicated file
+            bookmarks_file = os.path.join(ONTOLOGIA_DIR, 'bookmarks_importados.md')
+            with open(bookmarks_file, 'w', encoding='utf-8') as bf:
+                bf.write(f"# Bookmarks Importados\nImportado em {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} do arquivo `{args.file}`.\n\n")
+                for e in entries:
+                    bf.write(f"- [{e['title']}]({e['url']})\n")
+            log_success(f"Todos os {len(entries)} favoritos foram salvos com sucesso em: {bookmarks_file}")
+            
+            # For the main fontes_importadas.md, keep a link and the first 100 entries to avoid bloating it
+            entries_summary = [{"title": f"Todos os {len(entries)} favoritos salvos em bookmarks_importados.md", "url": f"file://{bookmarks_file}"}]
+            entries = entries_summary + entries[:100]
         except Exception as e:
             log_error(f"Falha ao ler favoritos: {e}")
             sys.exit(1)
