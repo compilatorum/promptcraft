@@ -1,33 +1,95 @@
 {
   "lexical_markers": {
-    "epistemic": ["axioma", "ontologia", "gnosio", "heurística", "canon", "fenomenologia", "hipótese", "invariante", "epistemologia"],
-    "syntactic": ["## USER:", "## ASSISTANT:", "#+TITLE:", "#+FILETAGS:", "- **Bookmark**:", "- **Repo**:", "- **arXiv Paper**:"],
-    "semantic": ["auto-regeneração", "redundante-confirmativo", "nó-novo-de-conhecimento", "ruído-de-baixa-densidade", "isomorfismo", "acoplamento-rígido"]
+    "epistemic": [
+      "axioma", "ontologia", "gnosio", "heurística", "canon", "fenomenologia", 
+      "hipótese", "invariante", "epistemologia", "aporia", "nexialismo", 
+      "isomorfismo", "simbiogênese", "exocérebro", "autogenia", "drift_epistemico",
+      "nucleo_cognitivo", "arquitetura_de_restricoes", "coerência_solitonica"
+    ],
+    "cognitive_and_neuro": [
+      "neurofeedback", "superdotação", "desintegração_positiva", "exopolítica",
+      "brain_training", "atenção_atencional", "psicologia_florecimento", 
+      "ciberdélica", "cognição_espacial", "senciência_funcional", "análise_cognitiva"
+    ],
+    "syntactic": [
+      "## USER:", "## ASSISTANT:", "#+TITLE:", "#+FILETAGS:", "- **Bookmark**:", 
+      "- **Repo**:", "- **arXiv Paper**:", "- **GDrive File**:", "- **Chatlog**:"
+    ],
+    "semantic": [
+      "auto-regeneração", "redundante-confirmativo", "nó-novo-de-conhecimento", 
+      "ruído-de-baixa-densidade", "isomorfismo", "acoplamento-rígido", 
+      "compressão_cognitiva", "wisdom_compression", "convergença_semantica",
+      "mystery_commons", "mystery_density", "tokenizar_perguntas", "singularização"
+    ]
+  },
+  "domains": {
+    "WIKIPEDIA": ["wikipedia.org", "wiktionary.org", "wikimedia.org"],
+    "BUSCAS": ["google.com/search", "google.com.br/search", "bing.com/search", "duckduckgo.com", "search.yahoo.com", "ecosia.org"],
+    "YOUTUBE": ["youtube.com", "youtu.be", "invidious.io"],
+    "ARTIGOS_CIENTIFICOS": ["arxiv.org", "semanticscholar.org", "nature.com", "springer.com", "ieee.org", "sciencedirect.com", "researchgate.net"],
+    "SITES_AUTENTICADOS": ["docs.google.com", "drive.google.com", "github.com/settings", "gitlab.com", "notion.so", "trello.com", "slack.com"],
+    "FONTES_DINAMICAS": ["tradingview.com", "dune.com", "coingecko.com", "coinmarketcap.com", "defillama.com", "etherscan.io", "dextools.io", "chainlist.org"],
+    "DESENVOLVIMENTO_CODE": ["github.com", "gitlab.com", "npmjs.com", "pypi.org", "docker.com", "stackoverflow.com", "emacswiki.org"],
+    "WEB3_GOVERNANCA": ["snapshot.org", "tally.xyz", "deepdao.io", "governance.uniswap.org", "ens.domains"]
   },
   "tags": {
     "IA_PESQUISA": {
-      "description": "Inteligência Artificial, Aprendizado de Máquina e Modelagem Epistêmica",
-      "subtags": ["engenharia_de_prompts", "rag_sistemas", "modelos_locais_slm", "fine_tuning_lora", "nlp_processamento"]
+      "description": "Inteligência Artificial, Aprendizado de Máquina, Processamento de Linguagem Natural e Alinhamento Cognitivo",
+      "subtags": [
+        "engenharia_de_prompts", "rag_sistemas", "modelos_locais_slm", "fine_tuning_lora", 
+        "nlp_processamento", "unsloth_training", "embeddings_vetoriais", "agentes_autonomos",
+        "linguistica_cognitiva", "cgan_generation", "autoencoders_representation"
+      ]
     },
     "DESENVOLVIMENTO": {
-      "description": "Engenharia de Software, Ferramentas CLI e Automação de Sistemas",
-      "subtags": ["github_starred", "mcp_protocol", "cdp_devtools", "emacs_worker", "automation_scripts"]
+      "description": "Engenharia de Software, Sistemas Operacionais, Redes e Ferramentas CLI/TUI",
+      "subtags": [
+        "github_starred", "mcp_protocol", "cdp_devtools", "emacs_worker", "automation_scripts",
+        "termux_android", "proot_distro", "python_development", "rust_programming", 
+        "elisp_scripting", "docker_containers", "bash_shell"
+      ]
     },
     "REGENERACAO_REFI": {
-      "description": "Finanças Regenerativas, Organizações Autônomas e Governança Web3",
-      "subtags": ["dao_governanca", "snapshot_voting", "onchain_metrics", "blockchains_regenerativos", "impact_investing"]
+      "description": "Economia Regenerativa, Finanças Descentralizadas, Governança On-chain e DAOs",
+      "subtags": [
+        "dao_governanca", "snapshot_voting", "onchain_metrics", "blockchains_regenerativos", 
+        "impact_investing", "tokenomics_design", "uniswap_liquidity", "smart_contracts_hacking",
+        "cryptoeconomics", "desci_science", "ip_nfts"
+      ]
     },
     "CONHECIMENTO_PKM": {
-      "description": "Sistemas de Gestão de Conhecimento Pessoal e Grafos de Conhecimento",
-      "subtags": ["org_roam_v2", "elfeed_rss", "llm_wiki_v2", "denote_metadata", "knowledge_graph"]
+      "description": "Gestão de Conhecimento Pessoal, Grafos Relacionais e Linguagens Semióticas",
+      "subtags": [
+        "org_roam_v2", "elfeed_rss", "llm_wiki_v2", "denote_metadata", "knowledge_graph",
+        "zettelkasten_method", "semantic_web", "exocerebro_digital", "ontosemiose", "nexialismo"
+      ]
     },
     "MIDIA_ACADEMICO": {
-      "description": "Canais de Comunicação, Papers Científicos e Ingestão de Mídia",
-      "subtags": ["youtube_transcricoes", "scholar_papers", "browser_bookmarks", "watch_history"]
+      "description": "Artigos Científicos, Aulas, Podcasts, Transcrições de Vídeo e Curadoria de Favoritos",
+      "subtags": [
+        "youtube_transcricoes", "scholar_papers", "arxiv_metadata", "semantic_scholar_recommendations",
+        "bookmarks_curated", "audio_lectures", "scientific_causality", "quantum_computation"
+      ]
     },
     "CHATLOGS_HISTORICO": {
-      "description": "Históricos de Conversação com Modelos de Linguagem e Chunks Sanitizados",
-      "subtags": ["sessao_dialogo", "chunks_sanitizados", "fine_tuning_alpaca", "conflitos_epistemicos"]
+      "description": "Históricos Sanitizados de Conversas com Modelos de Linguagem e Memória de Sessão",
+      "subtags": [
+        "sessao_dialogo", "chunks_sanitizados", "fine_tuning_alpaca", "conflitos_epistemicos",
+        "session_restoration", "companion_cognitivo", "dialogue_compaction"
+      ]
+    },
+    "NEURO_COGNICAO": {
+      "description": "Estudos sobre Neurodiversidade, Desenvolvimento de Potenciais e Engenharia de Foco",
+      "subtags": [
+        "neurofeedback_efficacy", "superdotacao_estigma", "desintegracao_positiva_dabrowski",
+        "foco_e_atencao", "brain_training_myths", "aprendizado_acelerado"
+      ]
+    },
+    "EXOTERICA_METAFISICA": {
+      "description": "Explorações de Fronteira: Misticismo Quântico, Filosofia Ciberdélica e Exopolítica",
+      "subtags": [
+        "quantum_mysticism", "ciberdelica_filosofia", "exopolitica_diplomacia", "corpo_de_luz_semiotico"
+      ]
     }
   }
 }

@@ -167,6 +167,15 @@ def classify_source(title, url, tags_dict):
                 
     return "CONHECIMENTO_PKM" # Default fallback
 
+def classify_domain(url, domains_dict):
+    """Classifies a URL into a domain group based on patterns in domains_dict."""
+    url_lower = url.lower()
+    for domain_group, patterns in domains_dict.items():
+        for pattern in patterns:
+            if pattern in url_lower:
+                return f"domain_{domain_group.lower()}"
+    return None
+
 def process_batch():
     init_db()
     tags_dict = load_tags()
@@ -188,23 +197,35 @@ def process_batch():
         # Virtual Denote/Org path
         virtual_file = f"shared-knowledge/{src['source_type']}/{url_hash}__{src['source_type']}.org"
         
+        # Determine status and extract distilled content if the file is local
+        status = "pending"
+        distilled_content = ""
+        actual_file = virtual_file
+        
+        if src["url"].startswith("file:///"):
+            local_path = src["url"].replace("file://", "")
+            if os.path.exists(local_path):
+                actual_file = local_path
+                distilled_content = promptcraft.extract_file_content(local_path)
+                status = "processed"
+        
         # Insert into 'files'
         cursor.execute("""
         INSERT OR IGNORE INTO files (file, title, hash, atime, mtime)
         VALUES (?, ?, ?, ?, ?);
-        """, (virtual_file, src["title"], url_hash, now_ts, now_ts))
+        """, (actual_file, src["title"], url_hash, now_ts, now_ts))
         
         # Insert into 'nodes' (storing status & url in properties JSON)
         properties_json = json.dumps({
             "url": src["url"],
             "source_type": src["source_type"],
-            "status": "pending",
-            "distilled_content": ""
+            "status": status,
+            "distilled_content": distilled_content
         })
         cursor.execute("""
-        INSERT OR IGNORE INTO nodes (id, file, level, pos, title, properties)
+        INSERT OR REPLACE INTO nodes (id, file, level, pos, title, properties)
         VALUES (?, ?, ?, ?, ?, ?);
-        """, (url_hash, virtual_file, 0, 1, src["title"], properties_json))
+        """, (url_hash, actual_file, 0, 1, src["title"], properties_json))
         
         # Insert into 'refs'
         cursor.execute("""
@@ -218,11 +239,68 @@ def process_batch():
         VALUES (?, ?);
         """, (url_hash, category.lower()))
         
+        # Classify and insert domain tag
+        domain_tag = classify_domain(src["url"], tags_dict.get("domains", {}))
+        if domain_tag:
+            cursor.execute("""
+            INSERT OR IGNORE INTO tags (node_id, tag)
+            VALUES (?, ?);
+            """, (url_hash, domain_tag))
+        
         insert_count += 1
             
         if idx > 0 and idx % 5000 == 0:
             conn.commit()
             print(f"   -> {idx}/{len(sources)} fontes processadas...")
+            
+    # Add chatlogs import from /home/sukata/chatlogs/sanitized
+    chatlogs_dir = "/home/sukata/chatlogs/sanitized"
+    if os.path.exists(chatlogs_dir):
+        print("💬 Importando e indexando chatlogs sanitizados...")
+        chatlog_count = 0
+        for filename in os.listdir(chatlogs_dir):
+            if not filename.endswith(".md"):
+                continue
+            local_filepath = os.path.join(chatlogs_dir, filename)
+            url_hash = hashlib.sha256(f"file://{local_filepath}".encode('utf-8')).hexdigest()[:16]
+            title = filename
+            
+            distilled_content = promptcraft.extract_file_content(local_filepath)
+            
+            properties_json = json.dumps({
+                "url": f"file://{local_filepath}",
+                "source_type": "chatlogs",
+                "status": "processed",
+                "distilled_content": distilled_content
+            })
+            
+            # Insert into 'files'
+            cursor.execute("""
+            INSERT OR IGNORE INTO files (file, title, hash, atime, mtime)
+            VALUES (?, ?, ?, ?, ?);
+            """, (local_filepath, title, url_hash, now_ts, now_ts))
+            
+            # Insert into 'nodes'
+            cursor.execute("""
+            INSERT OR REPLACE INTO nodes (id, file, level, pos, title, properties)
+            VALUES (?, ?, ?, ?, ?, ?);
+            """, (url_hash, local_filepath, 0, 1, title, properties_json))
+            
+            # Insert into 'refs'
+            cursor.execute("""
+            INSERT OR IGNORE INTO refs (node_id, ref, type)
+            VALUES (?, ?, ?);
+            """, (url_hash, f"file://{local_filepath}", "url"))
+            
+            # Insert into 'tags'
+            cursor.execute("""
+            INSERT OR IGNORE INTO tags (node_id, tag)
+            VALUES (?, ?);
+            """, (url_hash, "chatlogs_historico"))
+            
+            chatlog_count += 1
+            insert_count += 1
+        print(f"✅ {chatlog_count} chatlogs indexados com sucesso no SQLite.")
             
     conn.commit()
     print(f"✅ Povoamento concluído. {insert_count} fontes mapeadas nas tabelas org-roam.")
@@ -337,6 +415,13 @@ def process_batch():
         INSERT OR IGNORE INTO tags (node_id, tag)
         VALUES (?, ?);
         """, (url_hash, category.lower()))
+        
+        domain_tag = classify_domain(s["url"], tags_dict.get("domains", {}))
+        if domain_tag:
+            cursor.execute("""
+            INSERT OR IGNORE INTO tags (node_id, tag)
+            VALUES (?, ?);
+            """, (url_hash, domain_tag))
         
     conn.commit()
     conn.close()

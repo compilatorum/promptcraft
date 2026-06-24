@@ -144,6 +144,53 @@ def fetch_url_text(url):
     except Exception as e:
         raise Exception(f"Erro ao obter URL: {e}")
 
+def extract_file_content(filepath):
+    """Extracts text content from a local file based on its type (PDF, DOCX, MD, TXT, ORG) for database indexing."""
+    if not os.path.exists(filepath):
+        return ""
+    ext = os.path.splitext(filepath)[1].lower()
+    if ext in [".md", ".txt", ".org", ".json", ".html", ".htm"]:
+        try:
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                return f.read(5000) # Read up to 5000 chars for distillation
+        except Exception as e:
+            return f"Error reading text file: {e}"
+    elif ext == ".pdf":
+        try:
+            import fitz
+            doc = fitz.open(filepath)
+            text = ""
+            for i, page in enumerate(doc[:5]):
+                page_text = page.get_text()
+                if page_text:
+                    text += f"--- Page {i+1} ---\n{page_text}\n"
+            if not text.strip():
+                text = f"Scanned/Image-only PDF Document\nPages: {len(doc)}\nMetadata: {doc.metadata}"
+            return text[:10000]
+        except Exception:
+            try:
+                import pypdf
+                reader = pypdf.PdfReader(filepath)
+                text = ""
+                for i, page in enumerate(reader.pages[:5]):
+                    page_text = page.extract_text()
+                    if page_text:
+                        text += f"--- Page {i+1} ---\n{page_text}\n"
+                if not text.strip():
+                    text = f"Scanned/Image-only PDF Document\nPages: {len(reader.pages)}\nMetadata: {reader.metadata}"
+                return text[:10000]
+            except Exception as e:
+                return f"Error reading PDF: {e}"
+    elif ext == ".docx":
+        try:
+            import docx
+            doc = docx.Document(filepath)
+            paragraphs = [p.text for p in doc.paragraphs if p.text]
+            return "\n".join(paragraphs)[:5000]
+        except Exception as e:
+            return f"Error reading DOCX: {e}"
+    return f"Binary or unsupported file type ({ext})"
+
 # .env and config loader
 def load_config():
     config_path = os.path.join(BASE_DIR, 'config.json')
@@ -1465,8 +1512,9 @@ def cmd_importar(args):
             
             # 1. Get remote list of files and their MD5 hashes via rclone lsf
             cmd = ["rclone", "lsf", "--hash", "md5", "--format", "hp", "--recursive", 
-                   "--include", "*.md", "--include", "*.txt", "--include", "*.pdf", args.file]
-            res = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+                   "--include", "*.md", "--include", "*.txt", "--include", "*.pdf", 
+                   "--include", "*.docx", "--include", "*.org", args.file]
+            res = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
             if res.returncode != 0:
                 log_error(f"Erro ao listar arquivos remotos via rclone: {res.stderr}")
                 sys.exit(1)
@@ -1513,7 +1561,7 @@ def cmd_importar(args):
                     os.makedirs(os.path.dirname(local_filepath), exist_ok=True)
                     remote_filepath = args.file.rstrip("/") + "/" + rel_path
                     copy_cmd = ["rclone", "copyto", remote_filepath, local_filepath]
-                    c_res = subprocess.run(copy_cmd, capture_output=True, text=True, timeout=30)
+                    c_res = subprocess.run(copy_cmd, capture_output=True, text=True, timeout=180)
                     if c_res.returncode != 0:
                         log_error(f"Falha ao baixar {rel_path}: {c_res.stderr}")
                     else:
@@ -1528,10 +1576,7 @@ def cmd_importar(args):
                         title = os.path.basename(rel_path)
                         
                         # Read snippet for distilled content
-                        snippet = ""
-                        if local_filepath.endswith((".md", ".txt")):
-                            with open(local_filepath, 'r', encoding='utf-8', errors='ignore') as f:
-                                snippet = f.read(1000)
+                        snippet = extract_file_content(local_filepath)
                                 
                         properties_json = json.dumps({
                             "url": f"file://{local_filepath}",
