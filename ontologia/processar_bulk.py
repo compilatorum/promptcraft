@@ -19,26 +19,88 @@ BOOKMARKS_PATH = os.path.join(ONTOLOGIA_DIR, "bookmarks_importados.md")
 DB_PATH = os.path.join(ONTOLOGIA_DIR, "fontes_processadas.db")
 
 def init_db():
-    """Initializes the SQLite database schema."""
+    """Initializes the SQLite database with the exact schema of org-roam v2."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
+    
+    # Drop legacy table if it exists
+    cursor.execute("DROP TABLE IF EXISTS fontes;")
+    
+    # Create org-roam v2 compliant tables with composite primary keys to prevent duplication
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS fontes (
-        id TEXT PRIMARY KEY,
+    CREATE TABLE IF NOT EXISTS files (
+        file TEXT UNIQUE PRIMARY KEY,
         title TEXT,
-        url TEXT,
-        source_type TEXT,
-        category TEXT,
-        tags TEXT,
-        distilled_content TEXT,
-        status TEXT,
-        error_message TEXT,
-        processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        hash TEXT NOT NULL,
+        atime INTEGER NOT NULL,
+        mtime INTEGER NOT NULL
+    );
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS nodes (
+        id TEXT NOT NULL PRIMARY KEY,
+        file TEXT NOT NULL,
+        level INTEGER NOT NULL,
+        pos INTEGER NOT NULL,
+        todo TEXT,
+        priority TEXT,
+        scheduled TEXT,
+        deadline TEXT,
+        title TEXT,
+        properties TEXT,
+        olp TEXT,
+        FOREIGN KEY (file) REFERENCES files (file) ON DELETE CASCADE
+    );
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS aliases (
+        node_id TEXT NOT NULL,
+        alias TEXT,
+        PRIMARY KEY (node_id, alias),
+        FOREIGN KEY (node_id) REFERENCES nodes (id) ON DELETE CASCADE
+    );
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS citations (
+        node_id TEXT NOT NULL,
+        cite_key TEXT NOT NULL,
+        pos INTEGER NOT NULL,
+        properties TEXT,
+        PRIMARY KEY (node_id, cite_key, pos),
+        FOREIGN KEY (node_id) REFERENCES nodes (id) ON DELETE CASCADE
+    );
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS refs (
+        node_id TEXT NOT NULL,
+        ref TEXT NOT NULL,
+        type TEXT NOT NULL,
+        PRIMARY KEY (node_id, ref, type),
+        FOREIGN KEY (node_id) REFERENCES nodes (id) ON DELETE CASCADE
+    );
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS tags (
+        node_id TEXT NOT NULL,
+        tag TEXT,
+        PRIMARY KEY (node_id, tag),
+        FOREIGN KEY (node_id) REFERENCES nodes (id) ON DELETE CASCADE
+    );
+    """)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS links (
+        pos INTEGER NOT NULL,
+        source TEXT NOT NULL,
+        dest TEXT NOT NULL,
+        type TEXT NOT NULL,
+        properties TEXT NOT NULL,
+        PRIMARY KEY (pos, source, dest, type),
+        FOREIGN KEY (source) REFERENCES nodes (id) ON DELETE CASCADE
     );
     """)
     conn.commit()
     conn.close()
-    print(f"✅ Banco de dados SQLite inicializado em: {DB_PATH}")
+    print(f"✅ Banco de dados SQLite inicializado com a estrutura do org-roam v2 em: {DB_PATH}")
 
 def load_tags():
     with open(TAGS_PATH, 'r', encoding='utf-8') as f:
@@ -115,40 +177,62 @@ def process_batch():
     cursor = conn.cursor()
     
     # 1. Bulk populate all sources in the SQLite database (avoiding data loss)
-    print("🚀 Povoando banco de dados SQLite com todas as fontes...")
+    print("🚀 Povoando tabelas do org-roam v2 com todas as fontes...")
     insert_count = 0
+    now_ts = int(datetime.now().timestamp())
+    
     for idx, src in enumerate(sources):
         url_hash = hashlib.sha256(src["url"].encode('utf-8')).hexdigest()[:16]
         category = classify_source(src["title"], src["url"], tags_dict)
         
-        # Verify if already exists in DB
-        cursor.execute("SELECT 1 FROM fontes WHERE id = ?", (url_hash,))
-        if not cursor.fetchone():
-            cursor.execute("""
-            INSERT INTO fontes (id, title, url, source_type, category, tags, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?);
-            """, (url_hash, src["title"], src["url"], src["source_type"], category, json.dumps([category.lower()]), "pending"))
-            insert_count += 1
+        # Virtual Denote/Org path
+        virtual_file = f"shared-knowledge/{src['source_type']}/{url_hash}__{src['source_type']}.org"
+        
+        # Insert into 'files'
+        cursor.execute("""
+        INSERT OR IGNORE INTO files (file, title, hash, atime, mtime)
+        VALUES (?, ?, ?, ?, ?);
+        """, (virtual_file, src["title"], url_hash, now_ts, now_ts))
+        
+        # Insert into 'nodes' (storing status & url in properties JSON)
+        properties_json = json.dumps({
+            "url": src["url"],
+            "source_type": src["source_type"],
+            "status": "pending",
+            "distilled_content": ""
+        })
+        cursor.execute("""
+        INSERT OR IGNORE INTO nodes (id, file, level, pos, title, properties)
+        VALUES (?, ?, ?, ?, ?, ?);
+        """, (url_hash, virtual_file, 0, 1, src["title"], properties_json))
+        
+        # Insert into 'refs'
+        cursor.execute("""
+        INSERT OR IGNORE INTO refs (node_id, ref, type)
+        VALUES (?, ?, ?);
+        """, (url_hash, src["url"], "url"))
+        
+        # Insert into 'tags'
+        cursor.execute("""
+        INSERT OR IGNORE INTO tags (node_id, tag)
+        VALUES (?, ?);
+        """, (url_hash, category.lower()))
+        
+        insert_count += 1
             
         if idx > 0 and idx % 5000 == 0:
             conn.commit()
             print(f"   -> {idx}/{len(sources)} fontes processadas...")
             
     conn.commit()
-    print(f"✅ Povoamento concluído. {insert_count} novas fontes indexadas como 'pending'.")
+    print(f"✅ Povoamento concluído. {insert_count} fontes mapeadas nas tabelas org-roam.")
     
     # 2. Select a representative sample from each source type to perform a REAL fetch and distillation
-    # We will pick 1 sample from: youtube, github, snapshot (graphql), arxiv, and bookmarks
     samples = [
-        # Real YouTube Video (S6xzKM5UuOM or another valid clip)
         {"source_type": "youtube", "url": "https://www.youtube.com/watch?v=S6xzKM5UuOM", "title": "Vídeo Metacognitivo de Teste"},
-        # Real GitHub repository URL
         {"source_type": "github", "url": "https://github.com/compilatorum/promptcraft", "title": "Repositório Promptcraft"},
-        # Real Snapshot DAO proposal (via GraphQL space ens.eth)
         {"source_type": "snapshot", "url": "https://snapshot.org/#/ens.eth/proposal/0x9ed89cf79760eb92d220fee2da08896bf027317f394aab87863011f964e19453", "title": "[6.45][Social] Renewal of the Security Council"},
-        # Real arXiv paper
         {"source_type": "arxiv", "url": "http://arxiv.org/abs/2304.12345v3", "title": "Non-isometric codes for the black hole interior"},
-        # Real Web link from bookmarks
         {"source_type": "bookmarks", "url": "https://example.com", "title": "Exemplo de Bookmark Web"}
     ]
     
@@ -164,11 +248,9 @@ def process_batch():
         
         try:
             if s["source_type"] == "youtube":
-                # Real transcript API check
                 distilled_content = promptcraft.fetch_url_text(s["url"])
                 status = "processed"
             elif s["source_type"] == "github":
-                # Fetch GitHub API content for repository
                 req = urllib.request.Request(
                     "https://api.github.com/repos/compilatorum/promptcraft",
                     headers={"User-Agent": "Mozilla/5.0 promptcraft-cli"}
@@ -178,7 +260,6 @@ def process_batch():
                     distilled_content = f"GitHub Starred Repo: {repo_data.get('full_name')}\nDescription: {repo_data.get('description')}\nStars: {repo_data.get('stargazers_count')}\nLanguage: {repo_data.get('language')}"
                 status = "processed"
             elif s["source_type"] == "snapshot":
-                # Query proposals via GraphQL API directly
                 query = """
                 query {
                   proposal(id: "0x9ed89cf79760eb92d220fee2da08896bf027317f394aab87863011f964e19453") {
@@ -205,7 +286,6 @@ def process_batch():
                     distilled_content = f"DAO Proposal: {prop.get('title')}\nSpace: {prop.get('space', {}).get('name')}\nState: {prop.get('state')}\nBody: {prop.get('body')[:500]}..."
                 status = "processed"
             elif s["source_type"] == "arxiv":
-                # Fetch paper details from Semantic Scholar API
                 recs = promptcraft.fetch_semantic_scholar_recommendations("2304.12345")
                 if recs:
                     distilled_content = f"arXiv Paper Recommendations:\n" + "\n".join([f"- {r['title']} ({r['url']})" for r in recs])
@@ -213,7 +293,6 @@ def process_batch():
                     distilled_content = "Nenhuma recomendação adjacente encontrada."
                 status = "processed"
             elif s["source_type"] == "bookmarks":
-                # Scrape standard website text
                 distilled_content = promptcraft.fetch_url_text(s["url"])
                 status = "processed"
                 
@@ -221,16 +300,43 @@ def process_batch():
             err_msg = str(e)
             print(f"   ⚠️ Falha ao processar {s['source_type']}: {err_msg}")
             
-        # Update or insert sample in database
+        virtual_file = f"shared-knowledge/{s['source_type']}/{url_hash}__{s['source_type']}.org"
+        
+        # Insert/Update in 'files'
         cursor.execute("""
-        INSERT INTO fontes (id, title, url, source_type, category, tags, distilled_content, status, error_message)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO files (file, title, hash, atime, mtime)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(file) DO UPDATE SET
+            title = excluded.title,
+            mtime = excluded.mtime;
+        """, (virtual_file, s["title"], url_hash, now_ts, now_ts))
+        
+        # Insert/Update in 'nodes' (storing status, error & content in properties JSON)
+        properties_json = json.dumps({
+            "url": s["url"],
+            "source_type": s["source_type"],
+            "status": status,
+            "error_message": err_msg,
+            "distilled_content": distilled_content
+        })
+        cursor.execute("""
+        INSERT INTO nodes (id, file, level, pos, title, properties)
+        VALUES (?, ?, ?, ?, ?, ?)
         ON CONFLICT(id) DO UPDATE SET
-            distilled_content = excluded.distilled_content,
-            status = excluded.status,
-            error_message = excluded.error_message,
-            processed_at = CURRENT_TIMESTAMP;
-        """, (url_hash, s["title"], s["url"], s["source_type"], category, json.dumps([category.lower()]), distilled_content, status, err_msg))
+            properties = excluded.properties;
+        """, (url_hash, virtual_file, 0, 1, s["title"], properties_json))
+        
+        # Insert/Update in 'refs'
+        cursor.execute("""
+        INSERT OR IGNORE INTO refs (node_id, ref, type)
+        VALUES (?, ?, ?);
+        """, (url_hash, s["url"], "url"))
+        
+        # Insert/Update in 'tags'
+        cursor.execute("""
+        INSERT OR IGNORE INTO tags (node_id, tag)
+        VALUES (?, ?);
+        """, (url_hash, category.lower()))
         
     conn.commit()
     conn.close()
@@ -243,32 +349,44 @@ def analyze_database_results():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    cursor.execute("SELECT count(*) FROM fontes")
-    total = cursor.fetchone()[0]
+    cursor.execute("SELECT count(*) FROM files")
+    total_files = cursor.fetchone()[0]
     
-    cursor.execute("SELECT count(*) FROM fontes WHERE status = 'processed'")
-    processed = cursor.fetchone()[0]
+    cursor.execute("SELECT count(*) FROM nodes")
+    total_nodes = cursor.fetchone()[0]
     
-    cursor.execute("SELECT count(*) FROM fontes WHERE status = 'pending'")
-    pending = cursor.fetchone()[0]
+    # Parse properties in Python to count status since SQLite doesn't natively parse JSON in older systems
+    cursor.execute("SELECT properties FROM nodes")
+    rows = cursor.fetchall()
     
-    cursor.execute("SELECT count(*) FROM fontes WHERE status = 'failed'")
-    failed = cursor.fetchone()[0]
-    
+    processed = 0
+    pending = 0
+    failed = 0
+    for r in rows:
+        props = json.loads(r[0]) if r[0] else {}
+        status = props.get("status")
+        if status == "processed":
+            processed += 1
+        elif status == "failed":
+            failed += 1
+        else:
+            pending += 1
+            
     print("\n==================================================")
-    print("🔬 ANÁLISE DE QUALIDADE E COBERTURA DO BANCO PKM")
+    print("🔬 ANÁLISE DE QUALIDADE E COBERTURA DO BANCO PKM (org-roam v2)")
     print("==================================================")
-    print(f"Total de Fontes Indexadas no SQLite: {total}")
-    print(f"Fontes Processadas e Destiladas com Sucesso: {processed}")
-    print(f"Fontes Pendentes na Fila: {pending}")
-    print(f"Fontes com Falhas de Acesso: {failed}")
+    print(f"Total de Arquivos Virtuais (files): {total_files}")
+    print(f"Total de Nós de Conhecimento (nodes): {total_nodes}")
+    print(f"Nós Processados com Sucesso: {processed}")
+    print(f"Nós Pendentes na Fila: {pending}")
+    print(f"Nós com Falhas de Acesso: {failed}")
     print("--------------------------------------------------")
     
-    # Category Distribution
-    cursor.execute("SELECT category, count(*) FROM fontes GROUP BY category")
-    print("Distribuição por Categoria Semântica:")
-    for cat, cnt in cursor.fetchall():
-        print(f"  - {cat}: {cnt} fontes ({cnt/total:.2%})")
+    # Distribution by Tag
+    cursor.execute("SELECT tag, count(*) FROM tags GROUP BY tag")
+    print("Distribuição por Tag / Categoria Org-Roam:")
+    for tag, cnt in cursor.fetchall():
+        print(f"  - {tag}: {cnt} nós ({cnt/total_nodes:.2%})")
         
     print("==================================================")
     conn.close()
