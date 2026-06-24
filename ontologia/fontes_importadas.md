@@ -1540,3 +1540,13 @@ Registro consolidado de importações externas do ecossistema.
 - **Bookmark**: [Theory of Mind in Modern Large Language Models (LLMs) | by Greg Robison | Medium](https://gregrobison.medium.com/theory-of-mind-in-modern-large-language-models-llms-985b604f3371)
 - **Bookmark**: [Evaluating large language models in theory of mind tasks | PNAS](https://www.pnas.org/doi/10.1073/pnas.2405460121)
 - **Bookmark**: [[LR] Unveiling Theory of Mind in LLMs | Notes](https://howardhsuuu.github.io/posts/lr/llm-tom/)
+
+## Importação de GDRIVE em 2026-06-24 05:57:11
+
+- **GDrive File**: [Protocolo_da_Forja_Viva_Crônicas_do_Hiperobjeto.pdf](file:///home/sukata/promptcraft/takeout/Protocolo_da_Forja_Viva_Crônicas_do_Hiperobjeto.pdf)
+- **GDrive File**: [Jornada_ao_Hiperespaço_da_Consciência.pdf](file:///home/sukata/promptcraft/takeout/Jornada_ao_Hiperespaço_da_Consciência.pdf)
+- **GDrive File**: [Hyperobject_Soliton_Unified_Formalization.pdf](file:///home/sukata/promptcraft/takeout/Hyperobject_Soliton_Unified_Formalization.pdf)
+- **GDrive File**: [Sincronáculo_A_Arquitetura_de_um_Organismo_Digital.pdf](file:///home/sukata/promptcraft/takeout/Sincronáculo_A_Arquitetura_de_um_Organismo_Digital.pdf)
+- **GDrive File**: [Diagnóstico_Ontológico_A_Forja_Viva.pdf](file:///home/sukata/promptcraft/takeout/Diagnóstico_Ontológico_A_Forja_Viva.pdf)
+- **GDrive File**: [Teogonia_Digital_Epístolas_de_Gaia.pdf](file:///home/sukata/promptcraft/takeout/Teogonia_Digital_Epístolas_de_Gaia.pdf)
+- **GDrive File**: [Crônicas_da_Forja_Viva.pdf](file:///home/sukata/promptcraft/takeout/Crônicas_da_Forja_Viva.pdf)

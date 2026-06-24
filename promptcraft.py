@@ -1455,22 +1455,124 @@ def cmd_importar(args):
             sys.exit(1)
         try:
             import subprocess
+            import hashlib
+            import sqlite3
+            
             local_dest = os.path.join(BASE_DIR, "takeout")
             os.makedirs(local_dest, exist_ok=True)
-            log_info(f"Executando rclone copy de {args.file} para {local_dest}...")
-            cmd = ["rclone", "copy", args.file, local_dest, "--max-depth", "2", "--include", "*.md", "--include", "*.txt", "--include", "*.pdf"]
+            
+            log_info(f"Iniciando sincronização incremental via rclone para {args.file}...")
+            
+            # 1. Get remote list of files and their MD5 hashes via rclone lsf
+            cmd = ["rclone", "lsf", "--hash", "md5", "--format", "hp", "--recursive", 
+                   "--include", "*.md", "--include", "*.txt", "--include", "*.pdf", args.file]
             res = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
-            if res.returncode == 0:
-                log_success(f"Sincronização concluída com sucesso via rclone.")
-                imported_files = []
-                for root, _, files in os.walk(local_dest):
-                    for f in files:
-                        if f.endswith((".md", ".txt", ".pdf")):
-                            imported_files.append(f)
-                entries = [{"title": f, "url": f"file://{os.path.join(local_dest, f)}"} for f in imported_files[:50]]
-            else:
-                log_error(f"Erro no rclone: {res.stderr}")
+            if res.returncode != 0:
+                log_error(f"Erro ao listar arquivos remotos via rclone: {res.stderr}")
                 sys.exit(1)
+                
+            lines = res.stdout.strip().splitlines()
+            synced_files = []
+            now_ts = int(datetime.now().timestamp())
+            
+            # Connect to sources database for indexing
+            db_path = os.path.join(ONTOLOGIA_DIR, "fontes_processadas.db")
+            conn = None
+            if os.path.exists(db_path):
+                conn = sqlite3.connect(db_path)
+                cursor = conn.cursor()
+            
+            for line in lines:
+                if ";" not in line:
+                    continue
+                md5_remote, rel_path = line.split(";", 1)
+                md5_remote = md5_remote.strip()
+                rel_path = rel_path.strip()
+                
+                if not md5_remote or not rel_path:
+                    continue
+                    
+                local_filepath = os.path.join(local_dest, rel_path)
+                needs_download = True
+                
+                # Check if local file exists and matches hash
+                if os.path.exists(local_filepath):
+                    hasher = hashlib.md5()
+                    try:
+                        with open(local_filepath, 'rb') as lf:
+                            hasher.update(lf.read())
+                        md5_local = hasher.hexdigest()
+                        if md5_local == md5_remote:
+                            needs_download = False
+                            log_info(f"   [✓] {rel_path} já está atualizado.")
+                    except Exception:
+                        pass
+                        
+                if needs_download:
+                    log_info(f"   [+] Baixando/atualizando {rel_path}...")
+                    os.makedirs(os.path.dirname(local_filepath), exist_ok=True)
+                    remote_filepath = args.file.rstrip("/") + "/" + rel_path
+                    copy_cmd = ["rclone", "copyto", remote_filepath, local_filepath]
+                    c_res = subprocess.run(copy_cmd, capture_output=True, text=True, timeout=30)
+                    if c_res.returncode != 0:
+                        log_error(f"Falha ao baixar {rel_path}: {c_res.stderr}")
+                    else:
+                        synced_files.append(rel_path)
+                else:
+                    synced_files.append(rel_path)
+                    
+                # Index the file into the org-roam SQLite database
+                if conn and os.path.exists(local_filepath):
+                    try:
+                        url_hash = hashlib.sha256(f"file://{local_filepath}".encode('utf-8')).hexdigest()[:16]
+                        title = os.path.basename(rel_path)
+                        
+                        # Read snippet for distilled content
+                        snippet = ""
+                        if local_filepath.endswith((".md", ".txt")):
+                            with open(local_filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                                snippet = f.read(1000)
+                                
+                        properties_json = json.dumps({
+                            "url": f"file://{local_filepath}",
+                            "source_type": "gdrive",
+                            "status": "processed",
+                            "distilled_content": snippet
+                        })
+                        
+                        # Insert virtual files
+                        cursor.execute("""
+                        INSERT OR IGNORE INTO files (file, title, hash, atime, mtime)
+                        VALUES (?, ?, ?, ?, ?);
+                        """, (local_filepath, title, md5_remote or url_hash, now_ts, now_ts))
+                        
+                        # Insert node
+                        cursor.execute("""
+                        INSERT OR REPLACE INTO nodes (id, file, level, pos, title, properties)
+                        VALUES (?, ?, ?, ?, ?, ?);
+                        """, (url_hash, local_filepath, 0, 1, title, properties_json))
+                        
+                        # Insert refs
+                        cursor.execute("""
+                        INSERT OR IGNORE INTO refs (node_id, ref, type)
+                        VALUES (?, ?, ?);
+                        """, (url_hash, f"file://{local_filepath}", "url"))
+                        
+                        # Insert tags
+                        cursor.execute("""
+                        INSERT OR IGNORE INTO tags (node_id, tag)
+                        VALUES (?, ?);
+                        """, (url_hash, "gdrive"))
+                    except Exception as ie:
+                        log_warning(f"Falha ao indexar {rel_path} no SQLite: {ie}")
+            
+            if conn:
+                conn.commit()
+                conn.close()
+                log_success(f"Banco de dados fontes_processadas.db atualizado com as indexações do GDrive.")
+                
+            entries = [{"title": os.path.basename(f), "url": f"file://{os.path.join(local_dest, f)}"} for f in synced_files[:50]]
+            log_success(f"Sincronização incremental via rclone concluída. {len(synced_files)} arquivos sincronizados.")
         except Exception as e:
             log_error(f"Falha ao executar rclone: {e}")
             sys.exit(1)
