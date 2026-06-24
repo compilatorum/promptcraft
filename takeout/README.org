@@ -1,0 +1,99 @@
+# NeuroCoder - Emacs Configuration
+
+Sistema de configuração Emacs para integração com NeuroCoder/OpenCode e tecnologias web modernas.
+
+## Estrutura
+
+```
+.emacs.d/
+├── init.el              # Arquivo principal de configuração
+├── init.org             # Configuração em Org-mode (futuro)
+├── packages/           # Pacotes personalizados
+├── shared/             # Funções compartilhadas
+├── try/                # Espaço para experimentação
+└── README.org          # Esta documentação
+```
+
+## Filosofema
+
+> "A configuração como narrativa: o código como literatura viva."
+
+## Seções do init.el
+
+| Bloco | Função | Bloco | Função |
+|-------|--------|-------|--------|
+| 1-2 | Repositórios e use-package | 17 | Dired |
+| 3 | Performance | 18 | Magit/Git |
+| 4 | Temas e UI | 19 | Markdown |
+| 5 | Touchscreen | 20 | Modos de arquivo |
+| 6 | Navegação | 21 | Projectile |
+| 7 | Interface minimalista | 22-23 | Dashboard/PDF |
+| 8 | Encoding | 24 | Bookmarks |
+| 9 | Backup | 25-26 | Transient/Menus |
+| 10 | Diretórios | 27-32 | LSP, Treemacs, etc |
+
+## Atalhos Principais
+
+| Atalho | Ação |
+|--------|------|
+| `C-c o` | Menu NeuroCoder |
+| `C-c d` | Abrir Dired |
+| `C-c t` | Terminal .opencode |
+| `C-c D` | Abrir pasta .opencode |
+| `C-x g` | Magit Status |
+| `C-:` | Avy (pular para caractere) |
+| `C-=` | Expand-region |
+
+## Instalação de Dependências Externas
+
+### libvterm (para vterm)
+
+```bash
+# Debian/Ubuntu
+sudo apt install libvterm-dev
+
+# Arch
+sudo pacman -S vterm
+
+# macOS
+brew install libvterm
+```
+
+### pandoc (para Markdown)
+
+```bash
+# Debian/Ubuntu
+sudo apt install pandoc
+
+# macOS
+brew install pandoc
+```
+
+## Theme Customização
+
+Edite a linha 50 do `init.el`:
+
+```elisp
+(load-theme 'doom-one t)  ;; Troque por:
+;; doom-monokai-pro, doom-nord, doom-dracula, doom-gruvbox
+```
+
+## Troubleshooting
+
+### vterm não funciona
+- Verifique se `libvterm-dev` está instalado
+- Recompile Emacs com suporte a modules
+
+### Ícones não aparecem
+- Instale all-the-icons: `M-x all-the-icons-install-fonts`
+
+## Integração com Touchscreen
+
+O init.el inclui suporte a:
+- `pixel-scroll-precision-mode` para scroll suave
+- `xterm-mouse-mode` para mouse em terminal
+- `hammer-mode` para gestos touch
+
+## Licença
+
+MIT
