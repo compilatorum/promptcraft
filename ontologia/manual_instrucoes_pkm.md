@@ -195,3 +195,46 @@ Podemos construir conjuntos de dados de treinamento baseados em nossa base relac
         {"instruction": "Resuma e extraia as principais tags de ontologia do seguinte repositório/documento:", "input": "<distilled_content>", "output": "<title> - Focado em <tags>"}
         ```
     *   *Execução*: Importar este arquivo JSONL em um notebook de treino Unsloth para fazer o ajuste fino de um Llama-3-8B local especializado em sua taxonomia pessoal de projetos.
+
+### 🌐 4.4 Ingestão de Fontes Dinâmicas e Alinhamento com DAM (Reddit/PRAW, Busca Acadêmica, GraphQL)
+A expansão da base de conhecimento integra fluxos de dados em tempo real. No ecossistema Web3, essa Ingestão subsidia sistemas de **DAM (Decentralized Asset Management / Decentralized Autonomous Machine)**, onde agentes analisam dados on-chain para governança e tomadas de decisão financeiras automatizadas.
+
+1. **Reddit & PRAW (canais, notificações, favoritos)**:
+   - *Finalidade*: Monitorar subreddits específicos (ex: `r/emacs`, `r/Refi`), capturar postagens salvas (favorites) do usuário e rastrear mensagens/notificações da caixa de entrada.
+   - *Fluxo Relacional*: Postagens salvas são indexadas como nós de conhecimento com tag `bookmarks_curated`, enquanto notificações alimentam a tabela `events` para rastreamento comportamental de agentes.
+   - *Código de Ingestão*:
+     ```python
+     import praw
+     reddit = praw.Reddit(
+         client_id="YOUR_CLIENT_ID",
+         client_secret="YOUR_CLIENT_SECRET",
+         user_agent="pkm-agent:v1.0",
+         username="YOUR_USERNAME",
+         password="YOUR_PASSWORD"
+     )
+     # Ingerir salvos do usuário
+     for item in reddit.user.me().saved(limit=50):
+         # Mapear título, subreddit e corpo do post para distilled_content
+         pass
+     ```
+
+2. **Busca Acadêmica Semântica (Semantic Scholar vs. Google Scholar)**:
+   - *Recomendação*: **Semantic Scholar API** (`api.semanticscholar.org/v1/paper`). 
+   - *Motivo*: O Google Scholar não possui API aberta estável e realiza bloqueios agressivos por CAPTCHA. O Semantic Scholar fornece acesso aberto a resumos, contagem de citações, referências e adjacências semânticas estruturadas (ideais para grafos de RAG) e integra-se perfeitamente com metadados do arXiv.
+   - *Fluxo Relacional*: Artigos baixados são salvos em `takeout/` e indexados na tabela `documents` com fragmentos no `document_chunks`. As conexões de referências alimentam a tabela `graph_links` com tipo `references`.
+
+3. **GraphQL & Dados Web3 (DAM - Decentralized Asset Management)**:
+   - *Finalidade*: Consultar métricas financeiras de DeFi (Uniswap, Curve) e propostas de governança de DAOs (Snapshot GraphQL).
+   - *Alinhamento DAM*: Em sistemas de gerenciamento descentralizado de ativos (DeFi), o agente precisa capturar propostas on-chain para participar de decisões de portfólio. As propostas entram na tabela `tasks` (dentro de um DAG de governança) e os resultados financeiros retroalimentam a tabela `metrics` e `reliability_scores`.
+   - *Exemplo de Query GraphQL (Uniswap Subgraph)*:
+     ```graphql
+     query {
+       pools(orderBy: totalValueLockedUSD, orderDirection: desc, first: 5) {
+         id
+         token0 { symbol }
+         token1 { symbol }
+         totalValueLockedUSD
+       }
+     }
+     ```
+
