@@ -6,3 +6,5 @@ __pycache__/
 config.json
 backups/
 takeout/extracted/
+sparklin-notes/
+

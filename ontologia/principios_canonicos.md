@@ -73,3 +73,24 @@ referencias:
   - video:S6xzKM5UuOM
 ---
 A separação estrutural entre instruções comportamentais (Skills) e interfaces de comunicação externas (servidores MCP) determina a modularidade do agente de IA, sendo isomórfica à divisão entre a microarquitetura interna do processador e seus barramentos de I/O periféricos. [ATUALIZADO_2026]
+
+---
+axioma: Resiliência de Amortecimento sob Saturação Volumétrica
+confianca: medio
+evidencias_qtd: 1
+contradicoes_qtd: 0
+referencias:
+  - video:RhCzIkwhuiw
+---
+Sistemas de processamento expostos a surtos consecutivos de dados de alta intensidade (isomórficos a ejeções de massa coronal consecutivas) devem implementar mecanismos de Circuit Breaker dinâmicos e amortecimento com backoff adaptativo para prevenir o esgotamento de recursos e a quebra catastrófica de invariância na base de dados de conhecimento. [ATUALIZADO_2026]
+
+---
+axioma: Ingestão por Delegação de Sessão (CDP)
+confianca: alto
+evidencias_qtd: 1
+contradicoes_qtd: 0
+referencias:
+  - doc:manual-input
+---
+A extração de dados dinâmicos protegidos por autenticação proprietária pode ser executada com segurança delegando a autoridade de acesso à sessão ativa de um navegador sob controle direto do usuário (via CDP/Websockets), evitando o armazenamento de credenciais estáticas e respeitando barreiras de segurança perimetral (ex: Cloudflare). [ATUALIZADO_2026]
+
