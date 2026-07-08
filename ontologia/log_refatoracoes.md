@@ -249,3 +249,31 @@ A separação estrutural entre instruções comportamentais (Skills) e interface
 Estudar a especificação do Model Context Protocol (MCP) da Anthropic e comparar com o modelo de sidecars e plug-ins da OpenAI.
 
 ---
+
+## Processamento de Fonte (video) - 2026-07-04 01:02:02
+- **Referência**: manual-input
+- **Domínio**: domínio-próprio
+
+### Diff Semântico (Etapa 3)
+### 📝 Diff Semântico da Base
+
+```diff
++ ---
++ axioma: Resiliência de Amortecimento sob Saturação Volumétrica
++ confianca: medio
++ evidencias_qtd: 1
++ contradicoes_qtd: 0
++ referencias:
++   - video:RhCzIkwhuiw
++ ---
++ Sistemas de processamento expostos a surtos consecutivos de dados de alta intensidade (isomórficos a ejeções de massa coronal consecutivas) devem implementar mecanismos de Circuit Breaker dinâmicos e amortecimento com backoff adaptativo para prevenir o esgotamento de recursos e a quebra catastrófica de invariância na base de dados de conhecimento. [ATUALIZADO_2026]
+```
+
+### 🔍 Lacunas de Inquérito Abertas (Gaps)
+1. Como quantificar a taxa máxima de ingestão consecutiva de fontes de alta volatilidade sem induzir a desintegração semântica (*drift*) na base do Org-Roam?
+2. Quais são os limites ideais de tolerância a falhas para agentes recursivos expostos a inputs não normalizados de terceiros (isomorfismo da piezoeletricidade reversa)?
+
+### 📚 Sugestão de Próxima Fonte
+* Buscar estudos sobre *"Semantic Drift Prevention in Knowledge Graphs"* ou artigos científicos no arXiv sobre *"Load Shedding and Backoff Dynamics in LLM Agent Pipelines"*.
+
+---

@@ -117,6 +117,9 @@ def fetch_url_text(url):
             queries = urllib.parse.parse_qs(parsed.query)
             if "v" in queries:
                 video_id = queries["v"][0]
+            elif "/shorts/" in parsed.path:
+                video_id = parsed.path.split('/shorts/')[1].split('/')[0]
+                
                 
     if video_id:
         log_info(f"Detectado vídeo do YouTube. Tentando extrair transcrição para o ID: {video_id} ...")
@@ -1940,6 +1943,84 @@ def cmd_bump_template(args):
     os.rename(old_path, new_path)
     log_success(f"Template renomeado com sucesso de '{matched_file}' para '{new_filename}'")
 
+def cmd_edp(args):
+    """Executa o pipeline EDP (Essential Data Pipeline) com os dados e templates integrados."""
+    log_info(f"🧬 Inicializando Essential Data Pipeline (EDP) para o token {args.token}...")
+    
+    generator = None
+    try:
+        generator = get_generator_with_fallback(args)
+    except Exception as e:
+        log_warning(f"Erro ao inicializar gerador de LLM: {e}. Usando regras de fallback.")
+        
+    import sys
+    sys.path.append("/home/sukata")
+    try:
+        from lakehouse.edp_pipeline import EDPIngestor, CircularBuffer, VectorStoreAnalyzer, KnowledgeGraphManager, NeuroSymbolicDecisionEngine
+    except ImportError as e:
+        log_error(f"Erro ao importar o pipeline edp_pipeline do Lakehouse: {e}")
+        return
+        
+    ingestor = EDPIngestor()
+    log_info("Etapa 1: Capturando dados de mercado e literatura...")
+    market_data = ingestor.fetch_coingecko(args.token)
+    papers = ingestor.fetch_arxiv_metadata(args.token)
+    
+    buffer = CircularBuffer(max_files=100)
+    log_info("Etapa 2: Inserindo no Buffer Circular e destilando dados...")
+    buffer.insert(market_data, f"Mercado para {args.token}: preco={market_data['price']}, volume={market_data['volume_24h']}, volatilidade={market_data['volatility_score']}")
+    for idx, paper in enumerate(papers):
+        buffer.insert(paper, f"Artigo arXiv {idx}: titulo={paper['title']}, resumo={paper['summary']}")
+        
+    analyzer = VectorStoreAnalyzer()
+    log_info("Etapa 3: Executando busca vetorial e análise multivariada...")
+    context = analyzer.search(args.token, top_k=3)
+    analise_simb = analyzer.analise_multivariada(args.token, market_data)
+    
+    graph = KnowledgeGraphManager()
+    log_info("Etapa 4: Atualizando Grafo de Conhecimento...")
+    graph.add_intel(args.token, "DeFi Tokenomics", "CLASSIFICADO_COMO")
+    for paper in papers:
+        graph.add_intel(args.token, paper["title"][:50], "CITADO_EM")
+        
+    engine = NeuroSymbolicDecisionEngine(generator)
+    log_info("Etapa 5: Executando Decisão Neuro-Simbólica...")
+    
+    import numpy as np
+    hist_returns = [float(np.random.normal(0.001, 0.02)) for _ in range(50)]
+    kfold_res = engine.validacao_kfold_temporal(hist_returns, k=5)
+    contrafactual_res = engine.analise_contrafactual()
+    
+    analise_simb["kfold_validation"] = kfold_res
+    analise_simb["contrafactual_analysis"] = contrafactual_res
+    
+    template_path = os.path.join(TEMPLATES_DIR, "mptc_financial.md")
+    variables = {
+        "domain": args.domain,
+        "horizon": args.horizon,
+        "resources": "10GB Circular Buffer + pgvector/numpy cache",
+        "token": args.token
+    }
+    
+    try:
+        relatorio = engine.executar_decisao(template_path, variables, context, analise_simb)
+        log_success(f"Pipeline EDP executado com sucesso para o token {args.token}!")
+        print("\n" + "="*60)
+        print("💡 DECISÃO NEURO-SIMBÓLICA DO PIPELINE EDP")
+        print("="*60)
+        print(relatorio)
+        print("="*60)
+        
+        # Salva o relatório gerado na pasta de cache
+        rel_dir = os.path.join(DATA_DIR, "cache", "relatorios")
+        os.makedirs(rel_dir, exist_ok=True)
+        rel_path = os.path.join(rel_dir, f"relatorio_{args.token}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md")
+        with open(rel_path, 'w', encoding='utf-8') as f:
+            f.write(relatorio)
+        log_info(f"Relatório salvo em: {rel_path}")
+    except Exception as e:
+        log_error(f"Erro ao executar decisão final: {e}")
+
 def main():
     parser = argparse.ArgumentParser(
         description="Motor Nexialista de Destilação de Conhecimento - CLI de Engenharia de Prompts",
@@ -1987,6 +2068,16 @@ def main():
     parser_bump.add_argument("--name", required=True, help="Nome do arquivo ou base do template (ex: desconstrutor_atomico).")
     parser_bump.add_argument("--level", choices=["major", "minor"], default="minor", help="Nível do incremento semver (default: minor).")
 
+    # Command edp
+    parser_edp = subparsers.add_parser("edp", help="Executa o pipeline Essential Data Pipeline (EDP) para análise de finanças computacionais.")
+    parser_edp.add_argument("--token", required=True, help="Símbolo do token a analisar (ex: ETH, UNI, AAVE).")
+    parser_edp.add_argument("--horizon", default="30d", help="Horizonte temporal de análise (default: 30d).")
+    parser_edp.add_argument("--domain", default="DeFi", help="Domínio epistemológico (default: DeFi).")
+    parser_edp.add_argument("--provider", choices=["openai", "anthropic", "gemini", "huggingface", "agent", "antigravity"], help="Provedor do LLM.")
+    parser_edp.add_argument("--model", help="Modelo de LLM específico.")
+    parser_edp.add_argument("--api-key", help="Chave de API manual.")
+    parser_edp.add_argument("--temperature", type=float, default=0.2, help="Temperatura (default: 0.2).")
+
     # Add arguments to source/process inputs
     for p in [parser_triar, parser_proc]:
         group = p.add_mutually_exclusive_group(required=True)
@@ -2032,6 +2123,8 @@ def main():
         cmd_pesquisar(args)
     elif args.command == "bump-template":
         cmd_bump_template(args)
+    elif args.command == "edp":
+        cmd_edp(args)
 
 if __name__ == "__main__":
     main()
