@@ -26,6 +26,7 @@ O Promptcraft foi arquitetado para ir além da triagem e ingestão local. Para v
     refatorador_ciclo.md           → Prompt de Loop de Auto-Regeneração
     aplicar_diff_semantico.md      → Prompt auxiliar para aplicar o Diff Ontológico
     decision_defi_apis.md          → Prompt de Decisão Científica para DeFAI e APIs
+    neural_architecture_prompts.md → Prompts da Camada Neural (Invariantes, NatSpec, Tokenomics)
   /ontologia/
     principios_canonicos.md        → Base viva de axiomas (principais ensinamentos)
     lacunas_abertas.md             → Perguntas sem resposta geradas pelo sistema
