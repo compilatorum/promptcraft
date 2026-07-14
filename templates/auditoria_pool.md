@@ -1,0 +1,1 @@
+Audite o contrato inteligente da pool DeFi. Verifique taxas de slippage e condições de resgate.
