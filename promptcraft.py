@@ -42,7 +42,7 @@ from analysis.epistemological_pipeline import run_epistemological_pipeline
 def cmd_youtube(args):
     """Comando rápido para transcrição e resumo direto de vídeos do YouTube."""
     generator = get_generator(args.provider, args.model, args.api_key)
-    res = process_youtube_summary_simple(args.url, generator)
+    res = process_youtube_summary_simple(args.url, generator, no_llm=getattr(args, 'no_llm', False))
     
     if res.get("status") == "success":
         print("\n" + "="*80)
@@ -179,6 +179,7 @@ def main():
     yt_parser.add_argument("--provider", default="gemini", help="Provedor de IA (gemini, openai, huggingface, local)")
     yt_parser.add_argument("--model", help="Modelo específico do LLM")
     yt_parser.add_argument("--api-key", help="Chave de API do provedor")
+    yt_parser.add_argument("--no-llm", "--raw", action="store_true", help="Exibir apenas a transcrição bruta capturada sem chamar o LLM")
     yt_parser.add_argument("--save-lakehouse", action="store_true", help="Salvar resultado e metadados no Lakehouse")
 
     # Subcomando: cdp
